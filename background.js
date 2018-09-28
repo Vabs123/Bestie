@@ -234,6 +234,10 @@ function calculateTimeSpent(siteUrl, tabId){
 			
 // 		}), 10000);
 
+
+//****************************************************************************************
+//							Main Function
+
 setInterval(() => {
 	chrome.windows.getCurrent({populate:true, windowTypes:["normal"]},function(w){
 		chrome.idle.queryState(15, function(newState){
@@ -274,6 +278,7 @@ setInterval(() => {
 		});
 }, 1000);
 
+//************************************************************************************************************/
 // 		var value = [{start:4,end:5}];
 // 		var key = "2018805"
 //         chrome.storage.sync.set({[key] : value}, function() {
