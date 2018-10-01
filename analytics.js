@@ -4,9 +4,32 @@ var results = null;
 var showResults = null;
 var startTimeObj = null;
 var endTimeObj = null;
+var socialSiteList = [];
 
+
+// var socialSiteList = {
+// 	socialSites:[],
+// 	addSocialSite: function(socialSiteName){
+// 		this.socialSites.push(socialSiteName);
+// 	},
+// 	removeSocialSite: function(position){
+// 		this.socialSites.splice(position, 1);
+// 	} 	
+// };
 
 window.onload = function(){
+//	chrome.storage.sync.set({"socialSites":socialSiteList}, function(){});
+
+	//document.body.style.backgroundImage = "url('img.jpg')";
+	chrome.storage.sync.get(['socialSites'],function(result){
+		console.log("Inside called  " + JSON.stringify(result));
+		if(result.socialSites != undefined)
+			socialSiteList = result.socialSites;
+
+	console.log("AFter make = "+JSON.stringify(socialSiteList));
+	document.getElementById("home").style.backgroundImage =  "url('img.jpg')";
+	document.getElementById("add").addEventListener("click", handler.addSocialSite);
+	view.displaySocialSites();
 	startTime = document.getElementById("startTime");
 	startTime.defaultValue = "2018-09-27T00:00"; 
 	endTime = document.getElementById("endTime");
@@ -15,8 +38,85 @@ window.onload = function(){
 	showResults = document.getElementById("showresults");
 	showResults.style.display = "none";
 	results = document.getElementById("results");
+	view.setUpEventListeners();
+
+	});
+	// console.log("AFter make = "+JSON.stringify(socialSiteList));
+	// document.getElementById("home").style.backgroundImage =  "url('img.jpg')";
+	// document.getElementById("add").addEventListener("click", handler.addSocialSite());
+	// startTime = document.getElementById("startTime");
+	// startTime.defaultValue = "2018-09-27T00:00"; 
+	// endTime = document.getElementById("endTime");
+	// endTime.defaultValue = "2018-09-28T00:00"; 
+	// document.getElementById("fetchResults").addEventListener("click", fetchResults);
+	// showResults = document.getElementById("showresults");
+	// showResults.style.display = "none";
+	// results = document.getElementById("results");
+	// view.setUpEventListeners();
 
 }
+
+
+
+var handler = {
+	addSocialSite: function(){
+		var socialSiteName = document.getElementById("social_site_name");
+		console.log("Site name " + socialSiteName.value);
+		socialSiteList.push(socialSiteName.value);
+		socialSiteName.value = "";
+		chrome.storage.sync.set({"socialSites": socialSiteList}, function(){
+			view.displaySocialSites();	
+		});
+		
+	},
+
+	removeSocialSite: function(position){
+		socialSiteList.splice(position, 1);
+		chrome.storage.sync.set({"socialSites": socialSiteList}, function(){
+			view.displaySocialSites();	
+		});
+	}
+};
+
+var view = {
+	displaySocialSites: function(){
+		console.log(JSON.stringify(socialSiteList));
+		var socialSitesUl = document.getElementById("social_site_list");
+		socialSitesUl.innerHTML = "";
+		// Extract from chrome storage
+		for (var i = 0; i < socialSiteList.length; i++){
+			var socialSiteLi = document.createElement('LI');
+			var socialSite = socialSiteList[i];
+		//	console.log("social site in loop"+socialSite);
+			socialSiteLi.id = i;
+			socialSiteLi.textContent = socialSite;
+			socialSiteLi.appendChild(this.createDeleteButton());
+			socialSitesUl.appendChild(socialSiteLi);
+		}
+		console.log(JSON.stringify(socialSitesUl));
+	},
+	createDeleteButton: function(){
+		var deleteButton = document.createElement('button');
+		deleteButton.textContent = 'X';
+		deleteButton.className = 'deleteButton';
+		return deleteButton;
+	},
+
+	setUpEventListeners: function(){
+		var socialSitesUl = document.getElementById("social_site_list");
+		console.log("social site : " + socialSitesUl);
+		socialSitesUl.addEventListener('click', function(event){
+			console.log("event " + event);
+			var elementClicked = event.target;
+			if(elementClicked.className === 'deleteButton'){
+				handler.removeSocialSite(parseInt(elementClicked.parentNode.id));
+			}
+		});
+	}
+	
+};
+
+
 
 function fetchResults(){
 	var text = startTime.value;
@@ -94,6 +194,8 @@ function getStartCustomTime(timeObj, result, key){
 
 	for(var keys in result){
 		var totalTime = 0;
+		if(keys === "summary")
+			continue;
 		for(var timePair of result[keys]){
 			var stT = new Date(timePair.start);
 			var eT = new Date(timePair.end);

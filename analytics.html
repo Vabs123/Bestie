@@ -3,12 +3,151 @@
 <HTML>
 
 	<HEAD>
+
 		<script src = "analytics.js"></script>
+		<title>Bestie</title>
+		<meta charset="utf-8">
+  		<meta name="viewport" content="width=device-width, initial-scale=1">
+  		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+  	<style>
+
+  			.jumbotron{
+  				margin-top: 6%;
+  				opacity: 0.85;
+  			}
+
+
+  
+  .slideanim {visibility:hidden;}
+  .slide {
+      animation-name: slide;
+      -webkit-animation-name: slide;
+      animation-duration: 1s;
+      -webkit-animation-duration: 1s;
+      visibility: visible;
+  }
+  @keyframes slide {
+    0% {
+      opacity: 0;
+      transform: translateY(70%);
+    } 
+    100% {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+  }
+  @-webkit-keyframes slide {
+    0% {
+      opacity: 0;
+      -webkit-transform: translateY(70%);
+    } 
+    100% {
+      opacity: 1;
+      -webkit-transform: translateY(0%);
+    }
+  }
+  @media screen and (max-width: 768px) {
+    .col-sm-4 {
+      text-align: center;
+      margin: 25px 0;
+    }
+    .btn-lg {
+        width: 100%;
+        margin-bottom: 35px;
+    }
+  }
+  @media screen and (max-width: 480px) {
+    .logo {
+        font-size: 150px;
+    }
+  }
+
+  	</style>
+
 	</HEAD>
-	<BODY>
-		<H2>Bestie</H2>
-		<HR></HR>
-		<div>
+	<BODY id="myPage" data-spy="scroll" data-target=".navbar" data-offset="60">
+
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+  		<div class="container-fluid">
+    		<div class="navbar-header">
+      			<a class="navbar-brand" href="#">Bestie...</a>
+    		</div>
+    		<ul class="nav navbar-nav">
+      			<li class="active"><a href="#home">Home</a></li>
+      			<li><a href="#add_social_sites">Add Social Sites</a></li>
+      			<li><a href="#">Page 2</a></li>
+      			<li><a href="#">Page 3</a></li>
+    		</ul>
+  		</div>
+  </nav>
+		
+<div id ="home">
+		<div class="container">
+			</BR>
+			</BR>
+  			<div class="jumbotron ">
+    			<h1>Bestie..!</h1>      
+    			<p>Hi, My name is Bestie. I will bring the best out of you. </p>
+  			</div>  
+		</div>
+
+		
+
+		<div class="container">
+  			<div class="jumbotron">
+    			<h1>How I will be useful to you?</h1>      
+    			<p>I will track your social media time consumption, and will alert you when you reach your consumption limit to not to make productive time unhealthy.</p>
+  			</div>  
+		</div>
+
+
+		<div class="container">
+  			<div class="jumbotron">
+    			<h1>How can I become your Bestie?</h1>      
+    			<p>Ohh, you already are, when you installed me! Now I will do my part in the following ways:</p>
+    			<p><ul>
+    				<li> I will ask you to give names of social sites that digest your precious time.</li>
+    				<li> After that I will keep my eyes on them and make sure they don't take too much of your time.</li>
+    				<li> I am your bestie, I will not see anything other than time you spend on them, you can have faith in me.</li>
+    				<li> I will alert you, when you are lost in these social sites vicious circle.</li>
+    			</ul>
+    			</p>
+  			</div>  
+		</div>
+
+</div>
+
+<div id="add_social_sites" class="container-fluid">
+	<H3> Add below Social Sites that you want me to track for you:</H3>
+	<p>
+		<input type = "text" id = "social_site_name">
+		<ul id = "social_site_list">
+		
+		</ul>
+		<button id = "add">Add</button>
+	</p>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		<div style="display:none">
 		 <input TYPE = "datetime-local" id = "startTime">
 		
 		</BR>

@@ -1,14 +1,16 @@
 
+
 var stopTracking = false;
 var startTime = 0;
 var focus = true;
 var idle = false;
-var socialSites = [ 'google', 'quora', 'youtube', 'facebook'];
+var socialSites = [ 'instagram', 'quora', 'youtube', 'facebook', 'twitter'];
 var Url = "default";
 var socialSiteTrack = {
 	name:null,
 	id:null
 };
+
 
 
 function isSiteTracked(siteUrl){
