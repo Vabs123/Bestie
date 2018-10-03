@@ -169,26 +169,38 @@ function getTimeSpend(time){
 	var min = time % 60;
 	time /= 60;
 	time = (~~time);
-	return time+","+min+","+sec;
+	return ""+time+","+min+","+sec;
 }
 
 function queryDB(st, end){
 	//var  = [];
 	chrome.storage.sync.get(null, function(result) {
 		showResults.style.display = "block";
+		var tableBody = document.getElementById("table_body");
+		tableBody.innerHTML = ""; 	
+		var time = null;
+		var timeParts = null;
+
 		var output = "";
 		if(st in result){
 			if(startTimeObj.getHours() >= 0 || startTimeObj.getMinutes() >= 0)
-				output += getStartCustomTime(startTimeObj, result[st],st);
+				output += getStartCustomTime(startTimeObj, result[st],st, tableBody);
 		}
 		for(var key in result){
 			if(setOfKeys.has(key))
 				continue;
 			if(key < end && key > st){
-
-				output += "</br><H4>"+key+"</H4>";
+				var col = document.createElement('TD');
+				col.textContent = key;
+				var row = document.createElement('TR');
+				row.appendChild(col);
+				tableBody.appendChild(row);
+	//tableBody.appendChild(document.createElement('TR').appendChild(document.createElement('TD').textContent = key));				output += "</br><H4>"+key+"</H4>";
 				for(var k in result[key]["summary"]){
 					output += ""+k+" -  "+getTimeSpend(result[key]["summary"][k])+"</br>";
+					time = ""+getTimeSpend(result[key]["summary"][k]);
+					timeParts = time.split(',');
+					tableBody.appendChild(createTableRow(k, timeParts));
 
 				}
 				// console.log(result[key]["summary"]);	
@@ -198,19 +210,32 @@ function queryDB(st, end){
 		
 		if(end in result){
 			if(endTimeObj.getHours() > 0 || endTimeObj.getMinutes() > 0)
-				output += getEndCustomTime(endTimeObj, result[end], end);
+				output += getEndCustomTime(endTimeObj, result[end], end, tableBody);
 		}
 	//	console.log(listOfKeys);
-		results.innerHTML = output;
+		//results.innerHTML = output;
 	});
 }
 
-function getStartCustomTime(timeObj, result, key){
+function getStartCustomTime(timeObj, result, key, tableBody){
 	var output = "</br><H4>"+key+"</H4>";
+	var time = null;
+	var timeParts = null;
+	var col = document.createElement('TD');
+	col.textContent = key;
+	var row = document.createElement('TR');
+	row.appendChild(col);
+	tableBody.appendChild(row);
+	//tableBody.appendChild(document.createElement('TR').appendChild(document.createElement('TD').textContent = key));
+	
 	if(timeObj.getHours() == 0 && timeObj.getMinutes() == 0){
-		
 		for(var k in result["summary"]){
 			output += ""+k+" -  "+getTimeSpend(result["summary"][k])+"</br>";
+
+			time = ""+getTimeSpend(result["summary"][k]);
+			console.log(time + "Time spent and site name = "+k);
+			timeParts = time.split(',');
+			tableBody.appendChild(createTableRow(k, timeParts));
 
 		}
 		return output;
@@ -231,14 +256,24 @@ function getStartCustomTime(timeObj, result, key){
 
 		}
 		output += ""+keys+" -  "+getTimeSpend(totalTime)+"</br>";
+		time = ""+getTimeSpend(totalTime);
+		timeParts = time.split(',');
+		tableBody.appendChild(createTableRow(keys, timeParts));
 	}
 	return output;
 }
 
-function getEndCustomTime(timeObj, result, key){
+function getEndCustomTime(timeObj, result, key, tableBody){
 	var output = "</br><H4>"+key+"</H4>";
 
-
+	var time = null;
+	var timeParts = null;
+	var col = document.createElement('TD');
+	col.textContent = key;
+	var row = document.createElement('TR');
+	row.appendChild(col);
+	tableBody.appendChild(row);
+	//tableBody.appendChild(document.createElement('TR').appendChild(document.createElement('TD').textContent = key));	
 	for(var keys in result){
 		var totalTime = 0;
 		console.log(result[keys]);
@@ -255,8 +290,44 @@ function getEndCustomTime(timeObj, result, key){
 
 		}
 		output += ""+keys+" -  "+getTimeSpend(totalTime)+"</br>";
+		time = ""+getTimeSpend(totalTime);
+		timeParts = time.split(',');
+		tableBody.appendChild(createTableRow(keys, timeParts));
 	}
 	return output;
 }
 
 
+function createTableRow(site,time){
+	var emptycol = document.createElement('TD');
+	emptycol.textContent = "";
+	console.log(time+" Time length = "+time.length)
+	var hourCol = document.createElement('TD')
+	hourCol.textContent = "00";
+	var minCol = document.createElement('TD')
+	minCol.textContent = "00";
+	var secCol = document.createElement('TD')
+	hourCol.textContent = "00";
+	if(time.length === 3){
+		hourCol.textContent = time[0];
+		secCol.textContent = time[2];
+		minCol.textContent = time[1];
+	}
+	else if(time.length === 2){
+		secCol.textContent = time[1];
+		minCol.textContent = time[0];
+	}
+	else if(time.length === 1)
+		secCol.textContent = time[0];
+	var siteElement = document.createElement('TD');
+	siteElement.textContent = site;
+
+	var row = document.createElement('TR');
+	row.appendChild(emptycol);
+	row.appendChild(siteElement);
+	row.appendChild(hourCol);
+	row.appendChild(minCol);
+	row.appendChild(secCol);
+
+	return row;
+}
