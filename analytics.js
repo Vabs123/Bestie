@@ -4,8 +4,10 @@ var results = null;
 var showResults = null;
 var startTimeObj = null;
 var endTimeObj = null;
-var socialSiteList = [];
-
+//var notificationTime = '00:10';
+var setOfKeys = new Set(['socialSites', 'notificationTime']);
+var socialSiteList = [ 'instagram', 'quora', 'youtube', 'facebook', 'twitter'];
+var setNotificationTime = null;
 
 // var socialSiteList = {
 // 	socialSites:[],
@@ -21,24 +23,34 @@ window.onload = function(){
 //	chrome.storage.sync.set({"socialSites":socialSiteList}, function(){});
 
 	//document.body.style.backgroundImage = "url('img.jpg')";
-	chrome.storage.sync.get(['socialSites'],function(result){
+	chrome.storage.sync.get(['socialSites', 'notificationTime'],function(result){
 		console.log("Inside called  " + JSON.stringify(result));
 		if(result.socialSites != undefined)
 			socialSiteList = result.socialSites;
 
-	console.log("AFter make = "+JSON.stringify(socialSiteList));
-	document.getElementById("home").style.backgroundImage =  "url('img.jpg')";
-	document.getElementById("add").addEventListener("click", handler.addSocialSite);
-	view.displaySocialSites();
-	startTime = document.getElementById("startTime");
-	startTime.defaultValue = "2018-09-27T00:00"; 
-	endTime = document.getElementById("endTime");
-	endTime.defaultValue = "2018-09-28T00:00"; 
-	document.getElementById("fetchResults").addEventListener("click", fetchResults);
-	showResults = document.getElementById("showresults");
-	showResults.style.display = "none";
-	results = document.getElementById("results");
-	view.setUpEventListeners();
+		notificationTimeElement = document.getElementById("notification_time");
+		notificationTimeElement.defaultValue = "00:10";
+		if(result.notificationTime != undefined)
+			notificationTimeElement.value = result.notificationTime;
+		
+		
+		console.log(notificationTimeElement.value);
+
+		document.getElementById('setTime').addEventListener('click', setTime);
+
+		console.log("AFter make = "+JSON.stringify(socialSiteList));
+		document.getElementById("home").style.backgroundImage =  "url('img.jpg')";
+		document.getElementById("add").addEventListener("click", handler.addSocialSite);
+		view.displaySocialSites();
+		startTime = document.getElementById("startTime");
+		startTime.defaultValue = "2018-09-27T00:00"; 
+		endTime = document.getElementById("endTime");
+		endTime.defaultValue = "2018-09-28T00:00"; 
+		document.getElementById("fetchResults").addEventListener("click", fetchResults);
+		showResults = document.getElementById("showresults");
+		showResults.style.display = "none";
+		results = document.getElementById("results");
+		view.setUpEventListeners();
 
 	});
 	// console.log("AFter make = "+JSON.stringify(socialSiteList));
@@ -73,6 +85,7 @@ var handler = {
 	removeSocialSite: function(position){
 		socialSiteList.splice(position, 1);
 		chrome.storage.sync.set({"socialSites": socialSiteList}, function(){
+			console.log("Done changes in list");
 			view.displaySocialSites();	
 		});
 	}
@@ -117,6 +130,12 @@ var view = {
 };
 
 
+function setTime(){
+	var time = notificationTimeElement.value;
+	chrome.storage.sync.set({"notificationTime": time}, function(){
+		console.log("Notification Time changed");
+	});
+}
 
 function fetchResults(){
 	var text = startTime.value;
@@ -139,15 +158,18 @@ function getKey(date){
 
 function getTimeSpend(time){
 	time = (+time) / 1000;
+	time = (~~time);
 	if(time < 60)
-		return "Seconds : "+time;
+		return time;
 	var sec = time % 60;
 	time /= 60;
+	time = (~~time);
 	if(time < 60)
-		return "Minutes : " + time+" Seconds : "+sec;
+		return time+","+sec;
 	var min = time % 60;
 	time /= 60;
-	return "Hours : "+time+" Minutes : "+min+" Seconds : "+time;
+	time = (~~time);
+	return time+","+min+","+sec;
 }
 
 function queryDB(st, end){
@@ -160,6 +182,8 @@ function queryDB(st, end){
 				output += getStartCustomTime(startTimeObj, result[st],st);
 		}
 		for(var key in result){
+			if(setOfKeys.has(key))
+				continue;
 			if(key < end && key > st){
 
 				output += "</br><H4>"+key+"</H4>";
@@ -236,6 +260,3 @@ function getEndCustomTime(timeObj, result, key){
 }
 
 
-function showResults(result){
-
-}

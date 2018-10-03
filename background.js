@@ -1,11 +1,12 @@
 
-
+var setOfKeys = new Set(['socialSites', 'notificationTime']);
 var stopTracking = false;
 var startTime = 0;
 var focus = true;
 var idle = false;
 var socialSites = [ 'instagram', 'quora', 'youtube', 'facebook', 'twitter'];
 var Url = "default";
+var alertTime = 15;
 var socialSiteTrack = {
 	name:null,
 	id:null
@@ -122,7 +123,7 @@ function calculateTimeSpent(siteUrl, tabId){
 			updateCurrentSite(siteName, tabId);
    		}
    		else if(isCurrentlyTracking() && !isNewSiteSimilarToPreviousSite(siteName, tabId)){
-
+   			alertTime = 15;
    			var timeSpent = new Date() - startTime;
    			
   			console.log(timeSpent+ "  =  Total Time Spent on from cal time---" + siteName);
@@ -246,8 +247,14 @@ setInterval(() => {
 			
 				//console.log("Active Windows ----------"+w.id + " is focused ? - "+w.focused+" Window state " +w.state+ "Window Type = " + w.type);
 				if(!w.focused || newState != "active"){
+					alertTime = 15;
 					console.log("Focus changed to off --" + focus);
-					if(isCurrentlyTracking()){
+					chrome.storage.sync.get(['socialSites'],function(result){
+						console.log("Inside background called  " + JSON.stringify(result));
+						if(result.socialSites != undefined)
+							socialSites = result.socialSites;
+
+						if(isCurrentlyTracking()){
 							var timeSpent = new Date() - startTime;
    							//console.log("Time Spent on clos ---" + timeSpent);
   							console.log(timeSpent+ "  =  Total Time Spent before window closed --- " + socialSiteTrack.name);
@@ -256,6 +263,7 @@ setInterval(() => {
   							//storeActiveTimeOfSocialSite(siteName);
   							
 					}
+				});
 				}
 				else if(w.focused && newState === "active"){
 					console.log("Focus Changed back" + focus);
@@ -265,13 +273,38 @@ setInterval(() => {
 					}, function(tabs) {
   							var tab = tabs[0];
   							var url = tab.url;
-  							var siteName = isSiteTracked(tab.url);
-  							console.log(" Started Time after window opened --- " + siteName);
+  							var currentDay = new Date();
+  							var today = ""+currentDay.getFullYear()+currentDay.getMonth()+currentDay.getDate();
+
+  							chrome.storage.sync.get(['socialSites', 'notificationTime', today],function(result){
+								console.log("Inside background called  " + JSON.stringify(result));
+								
+								if(result.socialSites != undefined)
+									socialSites = result.socialSites;
+
+
+  								var siteName = isSiteTracked(tab.url);
+  								console.log(" Started Time after window opened --- " + siteName);
   							// if(siteName)
   							// 	startTime = new Date();
   							// updateCurrentSite(siteName, tab.id);
-  							calculateTimeSpent(tab.url, tab.id);
-  							
+  								calculateTimeSpent(tab.url, tab.id);
+  								if(alertTime === 0)
+  									alertTime = 15;
+  								console.log("outside time check" + alertTime);
+  								if(siteName){
+  									if(isExceededBrowsingTime(siteName, result.notificationTime, result[today]["summary"])){
+  									//here make changes if want to track sites separately
+  										console.log("In time check" + alertTime);
+  										if(alertTime === 15)
+  											alert("You have completed your time on Social Media. Please, focus on your work. \nTO view your Social Media usage, please go to analyse tab on dasboard");
+  											
+  										alertTime--;
+  										
+  									}
+  								}
+
+  							});
 						});
 				
 		
@@ -279,6 +312,32 @@ setInterval(() => {
 			});
 		});
 }, 1000);
+
+
+function isExceededBrowsingTime(siteName, notificationTime, time){
+	var totalTime = 0;
+	for(var site in time)
+		totalTime += ((+time[site])/1000);
+	console.log("Total calculated time in notification check = "+totalTime);
+	totalTime = ~~totalTime;
+	var nowTime = 0;
+	var timeParts = notificationTime.split(':');
+	var hours = ~~timeParts[0];
+	var min = ~~timeParts[1];
+	var notificationTimeInSeconds = (hours * 3600) + (min * 60); 
+	console.log(notificationTimeInSeconds + "Total Seconds");
+	console.log(notificationTime + "as stored");
+	console.log("Hour " + hours);
+	console.log("min " + min);
+	nowTime = new Date() - startTime;
+	nowTime /= 1000;
+	nowTime = ~~nowTime;
+	console.log("only current time  = "+nowTime);
+	nowTime += totalTime;
+	console.log("final time = " + nowTime);
+
+	return nowTime >= notificationTimeInSeconds;
+}
 
 //************************************************************************************************************/
 // 		var value = [{start:4,end:5}];
