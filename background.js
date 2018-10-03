@@ -12,12 +12,15 @@ var socialSiteTrack = {
 	id:null
 };
 
+var SAVETIME = 900;
+var saveTimeCounter = 0;
 
 
 function isSiteTracked(siteUrl){
+	var url = new URL(siteUrl).hostname;
 	for(var elem of socialSites){
   		reg = new RegExp(elem);
-  		if(reg.test(siteUrl))
+  		if(reg.test(url))
     		return elem;
 	}
 	return null;
@@ -241,12 +244,27 @@ function calculateTimeSpent(siteUrl, tabId){
 //****************************************************************************************
 //							Main Function
 
+
+
+// function saveData(){
+// 	if(isCurrentlyTracking)	
+// }
+
+
 setInterval(() => {
 	chrome.windows.getCurrent({populate:true, windowTypes:["normal"]},function(w){
+		if(saveTimeCounter === SAVETIME){
+			saveData();
+			saveTimeCounter = 0;
+		}
+		else
+			saveTimeCounter++;
 		chrome.idle.queryState(15, function(newState){
 			
 				//console.log("Active Windows ----------"+w.id + " is focused ? - "+w.focused+" Window state " +w.state+ "Window Type = " + w.type);
 				if(!w.focused || newState != "active"){
+
+					chrome.storage.sync.set({"closed":3}, function(){});
 					alertTime = 15;
 					console.log("Focus changed to off --" + focus);
 					chrome.storage.sync.get(['socialSites'],function(result){
@@ -314,6 +332,8 @@ setInterval(() => {
 }, 1000);
 
 
+
+
 function isExceededBrowsingTime(siteName, notificationTime, time){
 	var totalTime = 0;
 	for(var site in time)
@@ -364,3 +384,7 @@ function isExceededBrowsingTime(siteName, notificationTime, time){
 
 
 //chrome.storage.sync.clear(function(){console.log("clear all")});
+
+chrome.storage.sync.get(['closed'],function(result){
+	console.log(result.closed);
+});

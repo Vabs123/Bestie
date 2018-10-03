@@ -180,6 +180,14 @@ function queryDB(st, end){
 		tableBody.innerHTML = ""; 	
 		var time = null;
 		var timeParts = null;
+		var listOfKeys = [];
+
+		// for(var key in result){
+		// 	if(setOfKeys.has(key))
+		// 		continue;
+		// 	listOfKeys.push(key);
+		// }
+		// listOfKeys.sort();
 
 		var output = "";
 		if(st in result){
