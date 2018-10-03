@@ -246,19 +246,21 @@ function calculateTimeSpent(siteUrl, tabId){
 
 
 
-// function saveData(){
-// 	if(isCurrentlyTracking)	
-// }
+function saveData(){
+	if(isCurrentlyTracking()){
+		var timeSpent = new Date() - startTime;
+   							//console.log("Time Spent on clos ---" + timeSpent);
+  		console.log(timeSpent+ "  =  Regural Saver --- " + socialSiteTrack.name);
+  		storeActiveTimeOfSocialSite(startTime, new Date(), socialSiteTrack.name);
+  		updateCurrentSite(null,null);
+  							//storeActiveTimeOfSocialSite(siteName);  							
+	}
+}
 
 
 setInterval(() => {
 	chrome.windows.getCurrent({populate:true, windowTypes:["normal"]},function(w){
-		if(saveTimeCounter === SAVETIME){
-			saveData();
-			saveTimeCounter = 0;
-		}
-		else
-			saveTimeCounter++;
+		
 		chrome.idle.queryState(15, function(newState){
 			
 				//console.log("Active Windows ----------"+w.id + " is focused ? - "+w.focused+" Window state " +w.state+ "Window Type = " + w.type);
@@ -300,6 +302,12 @@ setInterval(() => {
 								if(result.socialSites != undefined)
 									socialSites = result.socialSites;
 
+								if(saveTimeCounter === SAVETIME){
+									saveData();
+									saveTimeCounter = 0;
+								}
+								else
+									saveTimeCounter++;
 
   								var siteName = isSiteTracked(tab.url);
   								console.log(" Started Time after window opened --- " + siteName);
