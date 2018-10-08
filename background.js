@@ -266,7 +266,7 @@ setInterval(() => {
 				//console.log("Active Windows ----------"+w.id + " is focused ? - "+w.focused+" Window state " +w.state+ "Window Type = " + w.type);
 				if(!w.focused || newState != "active"){
 
-					chrome.storage.sync.set({"closed":3}, function(){});
+				//	chrome.storage.sync.set({"closed":3}, function(){});
 					alertTime = 15;
 					console.log("Focus changed to off --" + focus);
 					chrome.storage.sync.get(['socialSites'],function(result){
@@ -393,6 +393,7 @@ function isExceededBrowsingTime(siteName, notificationTime, time){
 
 //chrome.storage.sync.clear(function(){console.log("clear all")});
 
-chrome.storage.sync.get(['closed'],function(result){
-	console.log(result.closed);
-});
+// chrome.storage.sync.get(['closed'],function(result){
+// 	console.log(result.closed);
+// });
+

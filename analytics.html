@@ -16,7 +16,7 @@
   	<style>
 
   	#today{
-  		margin-left: 15%;
+  		margin-left: 20%;
   		font-weight: bold;
 
   	}
@@ -62,10 +62,32 @@
   		color: black;
   	}
 
-  			.jumbotron{
+  	#today_chart{
+
+  	}
+
+  	#select_day_chart{
+  		display: none;
+  	}
+
+  	#custom_range_chart{
+  		display: none;;
+  	}
+
+  	#daily_avg_chart{
+  		display: none;
+  	}
+
+  	#all_time_chart{
+  		display: none;
+  	}
+
+
+
+  	.jumbotron{
   				margin-top: 6%;
   				opacity: 0.85;
-  			}
+  	}
 
 
   
@@ -246,9 +268,135 @@
   <div >
 
  </div>
- <span id = "today"> Today</span> <span id = "select_day">Select Day</span><span id = "daily_avg">Daily Average </span><span id = "custom_range">Custom Range Average</span><span id = "all_time">All Time</span> 
-<div>
+ <span id = "today"> Today</span> <span id = "select_day">Select Day</span> <span id = "all_time">All Time</span> <span id = "custom_range">Custom Range Average</span>
+
+<div id = "set_date_query">
 </div>
+<!--- Here The piechart code comes
+-->
+ <div id = "today_chart" class = "container">
+		    <div id="today_canvas-holder" style="width:35%; display:inline-block;" >
+		       <canvas id="today_chart-area"></canvas>
+	     </div>
+    <div   id = "today_table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">
+	     <table id = "today_data_table" width = "100%" height = "250">
+          <col width="0">
+          <col width="200">
+          <col width="0">
+          <col width="0">
+          <col width="0">
+	        <col width="0">
+          <col width="0">
+          <col width="0">
+	        <col width="0">
+          <col width="0">
+          <thead style = "background-color: lightgrey; text-align: center; " id = "table_head">
+            <tr id = "table_head">
+              <td colspan="10" id = "table_head">
+                <span style="color: black">Today data</span>
+              </td>
+            </tr>
+          </thead>
+       </table>
+
+	 </div>
+  </div>
+
+  <div id = "select_day_chart" class = "container">
+		    <div id="select_canvas-holder" style="width:35%; display:inline-block;" >
+		       <canvas id="select_chart-area"></canvas>
+	     </div>
+    <div   id = "select_table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">
+	     <table id = "select_data_table" width = "100%" height = "250">
+          <col width="0">
+          <col width="200">
+          <col width="0">
+          <col width="0">
+          <col width="0">
+	        <col width="0">
+          <col width="0">
+          <col width="0">
+	        <col width="0">
+          <col width="0">
+          <thead style = "background-color: lightgrey; text-align: center; " id = "table_head">
+            <tr id = "table_head">
+              <td colspan="10" id = "table_head">
+                <span style="color: black">Select day data</span>
+              </td>
+            </tr>
+          </thead>
+       </table>
+
+	 </div>
+  </div>
+
+
+
+
+<div id = "custom_range_chart" class = "container">
+		    <div id="custom_range_canvas-holder" style="width:35%; display:inline-block;" >
+		       <canvas id="custom_range_chart-area"></canvas>
+	     </div>
+    <div   id = "custom_range_table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">
+	     <table id = "custom_range_data_table" width = "100%" height = "250">
+          <col width="0">
+          <col width="200">
+          <col width="0">
+          <col width="0">
+          <col width="0">
+	        <col width="0">
+          <col width="0">
+          <col width="0">
+	        <col width="0">
+          <col width="0">
+          <thead style = "background-color: lightgrey; text-align: center; " id = "table_head">
+            <tr id = "table_head">
+              <td colspan="10" id = "table_head">
+                <span style="color: black">Custom Range data</span>
+              </td>
+            </tr>
+          </thead>
+       </table>
+
+	 </div>
+  </div>
+
+
+
+<div id = "all_time_chart" class = "container">
+		    <div id="all_time_canvas-holder" style="width:35%; display:inline-block;" >
+		       <canvas id="all_time_chart-area"></canvas>
+	     </div>
+    <div   id = "all_time_table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">
+	     <table id = "all_time_data_table" width = "100%" height = "250">
+          <col width="0">
+          <col width="200">
+          <col width="0">
+          <col width="0">
+          <col width="0">
+	        <col width="0">
+          <col width="0">
+          <col width="0">
+	        <col width="0">
+          <col width="0">
+          <thead style = "background-color: lightgrey; text-align: center; " id = "table_head">
+            <tr id = "table_head">
+              <td colspan="10" id = "table_head">
+                <span style="color: black">All time data</span>
+              </td>
+            </tr>
+          </thead>
+       </table>
+
+	 </div>
+  </div>
+
+
+
+
+
+<!--- Here The piechart code comes
+-->
 </div>	
 	</BODY>
 
