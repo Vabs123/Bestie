@@ -1,10 +1,7 @@
+var randomScalingFactor = function() {
+	return Math.round(Math.random() * 100);
+};
 
-//console.log("hello")
-//Doughnut Chart
-var data = [];
-var labels = [];
-var BGCOLOR = ["#00FFFF", "#0000FF", "#8A2BE2", "#A52A2A", "#5F9EA0", "#D2691E","#DC143C","#008B8B","#FF8C00", "#8B0000", "#228B22","#FFD700", "#FF4500","#9ACD32"];
-var bColor = [];
 
 
 Chart.pluginService.register({
@@ -16,7 +13,7 @@ Chart.pluginService.register({
 				//Get options from the center object in options
         var centerConfig = chart.config.options.elements.center;
       	var fontStyle = centerConfig.fontStyle || 'Arial';
-		var txt = centerConfig.text;
+				var txt = centerConfig.text;
         var color = centerConfig.color || '#000';
         var sidePadding = centerConfig.sidePadding || 20;
         var sidePaddingCalculated = (sidePadding/100) * (chart.innerRadius * 2)
@@ -49,19 +46,22 @@ Chart.pluginService.register({
 		}
 	});
 
-
-		var config = {
+var config = {
 			type: 'doughnut',
 			data: {
 			//	mousemove: abc,
 				datasets: [{
 					data: [
-						1,2,3,4,5
+						randomScalingFactor(),
+						randomScalingFactor(),
+						randomScalingFactor(),
+						randomScalingFactor(),
+						randomScalingFactor(),
 					],
 					"backgroundColor":["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"],
 					//"hoverBorderColor":["rgb(255, 91, 132)","rgb(54, 62, 235)","rgb(255, 5, 86)"],
 					
-					label: 'Today Analysis'
+					label: 'Dataset 1'
 				}],
 				labels: [
 					'January 100% 00h 00m 00s',
@@ -79,8 +79,8 @@ Chart.pluginService.register({
     			},
   			
 				title: {
-					display: false,
-					text: "Bestie Today's Analysis"
+					display: true,
+					text: 'Chart.js Doughnut Chart'
 				},
 				animation: {
 					animateScale: true,
@@ -90,7 +90,7 @@ Chart.pluginService.register({
 
 				elements: {
 						center: {
-									text: '',
+									text: '90%',
           							color: '#FF6384', // Default is #000000
           							fontStyle: 'Arial', // Default is Arial
           							sidePadding: 20 // Defualt is 20 (as a percentage)
@@ -105,41 +105,3 @@ Chart.pluginService.register({
 };
 
 
-
-
-
-window.onload = function(){
-	//console.log("hello");
-	var canvas = document.getElementById("chart-area");
-	var ctx = canvas.getContext("2d");
-	var todayAnalysis = new Chart(ctx, config);
-	var todayData = todayAnalysis.chart.config.data;
-
-	document.getElementById("analytics").addEventListener("click", showAnalytics);
-
-	var today = new Date();
-	var key = ""+today.getFullYear()+today.getMonth()+today.getDate();
-	chrome.storage.sync.get([key],function(result){
-		console.log(result[key]);
-		if(result[key]){
-			var summary = result[key]["summary"];
-			var i = 0;
-			for(var site in summary){
-				data.push(((+summary[site])));
-				labels.push(site);
-				bColor.push(BGCOLOR[i++]);
-			}
-			todayData.datasets[0].data = data;
-			todayData.datasets[0].backgroundColor = bColor;
-			todayData.labels = labels;
-			todayAnalysis.render();
-
-		}
-	});
-
-
-}
-
- function showAnalytics(){
- 	chrome.tabs.create({"url":chrome.runtime.getURL("analytics.html")});
- }

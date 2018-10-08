@@ -1,0 +1,337 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Doughnut Chart</title>
+
+	<style>
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+
+	tr{
+		color:grey;
+	}
+	</style>
+
+
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+
+
+</head>
+
+<body>
+	<div id="canvas-holder" style="width:40%">
+		<canvas id="chart-area"></canvas>
+	</div>
+
+	<table id = "table">
+  <col width="200">
+  <col width="0">
+  <col width="0">
+   <col width="0">
+	 <col width="0">
+      <col width="0">
+        <col width="0">
+	 <col width="0">
+      <col width="0">
+  <tr id = "1">
+    <td>January</td>
+    <td>100.00</td>
+      <td>%</td>
+        <td>00</td>
+      <td>h</td>
+       <td>00</td>
+      <td>m</td>
+        <td>00</td>
+      <td>s</td>
+  </tr>
+
+   <tr id = "2">
+    <td>January</td>
+    <td>100.00</td>
+      <td>%</td>
+        <td>00</td>
+      <td>h</td>
+       <td>00</td>
+      <td>m</td>
+        <td>00</td>
+      <td>s</td>
+  </tr>
+ 
+</table>
+
+	
+	<script>
+		//var canvas = null;
+		var randomScalingFactor = function() {
+			return Math.round(Math.random() * 100);
+		};
+
+
+
+Chart.pluginService.register({
+		beforeDraw: function (chart) {
+			if (chart.config.options.elements.center) {
+        //Get ctx from string
+        var ctx = chart.chart.ctx;
+        
+				//Get options from the center object in options
+        var centerConfig = chart.config.options.elements.center;
+      	var fontStyle = centerConfig.fontStyle || 'Arial';
+		var txt = centerConfig.text;
+        var color = centerConfig.color || '#000';
+        var sidePadding = centerConfig.sidePadding || 20;
+        var sidePaddingCalculated = (sidePadding/100) * (chart.innerRadius * 2)
+        //Start with a base font of 30px
+        ctx.font = "30px " + fontStyle;
+        
+				//Get the width of the string and also the width of the element minus 10 to give it 5px side padding
+        var stringWidth = ctx.measureText(txt).width;
+        var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
+
+        // Find out how much the font can grow in width.
+        var widthRatio = elementWidth / stringWidth;
+        var newFontSize = Math.floor(30 * widthRatio);
+        var elementHeight = (chart.innerRadius * 2);
+
+        // Pick a new font size so it will not be larger than the height of label.
+        var fontSizeToUse = Math.min(newFontSize, elementHeight);
+
+				//Set font settings to draw it correctly.
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
+        var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
+        ctx.font = fontSizeToUse+"px " + fontStyle;
+        ctx.fillStyle = color;
+        
+        //Draw text in center
+        ctx.fillText(txt, centerX, centerY);
+			}
+		}
+	});
+
+
+		var config = {
+			type: 'doughnut',
+			data: {
+			//	mousemove: abc,
+				datasets: [{
+					data: [
+						randomScalingFactor(),
+						randomScalingFactor(),
+						randomScalingFactor(),
+						randomScalingFactor(),
+						randomScalingFactor(),
+					],
+					"backgroundColor":["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"],
+					//"hoverBorderColor":["rgb(255, 91, 132)","rgb(54, 62, 235)","rgb(255, 5, 86)"],
+					
+					label: 'Dataset 1'
+				}],
+				labels: [
+					'January 100% 00h 00m 00s',
+					'Orange',
+					'Yellow',
+					'Green',
+					'Blue'
+				]
+			},
+			options: {
+				//onHover: abc,
+				responsive: true,
+				 legend: {
+    	display: false
+    			},
+  			
+				title: {
+					display: false,
+					text: 'Chart.js Doughnut Chart'
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+				},
+				events:["mousemove", "mouseout", "click", "touchstart", "touchmove"],
+
+				elements: {
+						center: {
+									text: '',
+          							color: '#FF6384', // Default is #000000
+          							fontStyle: 'Arial', // Default is Arial
+          							sidePadding: 20 // Defualt is 20 (as a percentage)
+				}
+			},
+				// events.click: function(e){alert("s")},
+				// onHover: function (e,t){
+				// 		alert("Event = " + e+" \n Part clicked  - ");
+				// }
+			
+			}
+		};
+var  canvas = document.getElementById("chart-area");
+
+	var ctx = canvas.getContext("2d");
+			//var ctx = document.getElementById('chart-area').getContext('2d');
+			var myDoughnut = new Chart(ctx, config);
+		//	canvas.onHover(function(e,t){alert(e+t);});
+			console.log(myDoughnut);
+			console.log(myDoughnut.getDatasetMeta(0).data[2]);
+		//	myDoughnut.active = [myDoughnut.getDatasetMeta(0).data[2]];
+
+			var id1 = myDoughnut.getDatasetMeta(0).data[2];
+
+// update the hover style
+			myDoughnut.updateHoverStyle([id1], null, true);
+
+// render so we can see it
+			myDoughnut.render();
+			console.dir(myDoughnut);
+		//	myDoughnut.options.elements.center.text = "Vabs\nwww.abc.com";
+		//	myDoughnut.options.elements.center.color = "#000";
+		//	events.mousemove = function(e){alert("heloo"+e);}
+			//myDoughnut.update();
+		window.onload = function(e, t) {
+			
+    	
+			//ctx.onclick = function(e){alert(e);};
+			 
+};
+
+var cur = null;
+
+var t = document.getElementById("table");
+t.addEventListener("mouseover", function(e){
+	var rowHovered = e.target.parentElement;
+	var body = document.querySelector("body")
+	console.log("Selected= "+body);
+	console.log("Hovered row = "+rowHovered);
+	if(rowHovered != body){
+		rowHovered.style.color = "black";
+		cur = myDoughnut.getDatasetMeta(0).data[rowHovered.id];
+		myDoughnut.updateHoverStyle([cur], null, true);
+	
+// render so we can see it
+		myDoughnut.render();
+		var data = myDoughnut.chart.config.data.datasets[0];
+		myDoughnut.options.elements.center.text = data.data[rowHovered.id];
+		//data.borderColor = "black";
+		myDoughnut.options.elements.center.color = data.backgroundColor[rowHovered.id];
+	}
+});
+
+t.addEventListener("mouseout", function(e){
+	var rowHovered = e.target.parentElement;
+	console.log(rowHovered);
+	//console.log(e);
+	rowHovered.style.color = "grey";
+
+
+	myDoughnut.updateHoverStyle([cur], null, false);
+	
+// render so we can see it
+	myDoughnut.render();
+	myDoughnut.options.elements.center.text = "";
+
+});
+
+
+function getAllMethods(object) {
+    return Object.getOwnPropertyNames(object).filter(function(property) {
+        return typeof object[property] == 'function';
+    });
+}
+
+console.log(getAllMethods(canvas));
+//console.log(myDoughnut.__proto__.updateHoverStyle);
+
+// canvas.onmousemove = function(e){
+// 	console.log("Canvas = " + JSON.stringify(e));
+// }
+var row = null;
+canvas.onmousemove =function(e){
+	//alert(e);
+	console.log("condsle");
+	console.log(myDoughnut.getElementsAtEvent(e));
+	var curaction  = myDoughnut.getElementsAtEvent(e);
+	console.log("condsle");
+	var activePoints = myDoughnut.getElementsAtEvent(e);
+	if (activePoints[0]) {
+			//	console.log(JSON.stringify(activePoints[0]));
+        		var chartData = activePoints[0]['_chart'].config.data;
+        		console.log(chartData);
+        		var idx = activePoints[0]['_index'];
+
+        		var label = chartData.labels[idx];
+        		var value = chartData.datasets[0].data[idx];
+        		myDoughnut.options.elements.center.text = value;
+        		myDoughnut.options.elements.center.color = chartData.datasets[0].backgroundColor[idx];
+        		if(row != null)
+        			row.style.color = "grey";
+        		row = document.getElementById(idx);
+        		row.style.color = "black";
+        	//	chartData.datasets[0].
+        		// var url = "http://example.com/?label=" + label + "&value=" + value;
+        		// console.log(url);
+        		// alert(url);
+      		}
+};
+
+canvas.onmouseout =function(e){
+
+    myDoughnut.options.elements.center.text = "";
+    row.style.color = "grey";
+        	//	chartData.datasets[0].
+        		// var url = "http://example.com/?label=" + label + "&value=" + value;
+        		// console.log(url);
+        		// alert(url);
+      		
+};
+
+// canvas.addEventListener("mouseover",function(e){
+// 	console.log("condsle");
+// 	console.log(myDoughnut.getElementsAtEvent(e));
+// 	console.log("condsle");
+// });
+
+canvas.onclick = function(evt) {
+
+			
+			
+
+// update the hover style
+			myDoughnut.updateHoverStyle([id1], null, false);
+
+// render so we can see it
+			myDoughnut.render();
+			console.dir(myDoughnut);
+
+			console.log(myDoughnut.active);
+      		var activePoints = myDoughnut.getElementsAtEvent(evt);
+      		console.log(activePoints);
+			if (activePoints[0]) {
+			//	console.log(JSON.stringify(activePoints[0]));
+        		var chartData = activePoints[0]['_chart'].config.data;
+        		console.log(chartData);
+        		var idx = activePoints[0]['_index'];
+
+        		var label = chartData.labels[idx];
+        		var value = chartData.datasets[0].data[idx];
+        	//	chartData.datasets[0].
+        		// var url = "http://example.com/?label=" + label + "&value=" + value;
+        		// console.log(url);
+        		// alert(url);
+      		}
+		};
+function abc(e){
+	alert("Event = " + e+" \n Part clicked  - ");
+}
+		
+	</script>
+</body>
+
+</html>

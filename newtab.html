@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<HTML>
+
+	<HEAD>
+		<style>
+			canvas {
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+			}
+
+			tr{
+				color:grey;
+			}
+
+      #table{
+        margin-left: 20%;
+        margin-bottom:  5%;
+      }
+
+    #canvas-holder{
+      margin-left: 2%;
+       
+      
+    }
+
+    .form-inline{
+      width: 60%;
+      margin-left: 20%;
+    }
+    .jumbotron{
+        margin-top: 3%;
+        opacity: 0.85;
+    }
+    .form{
+      margin-top: 2%;
+    }
+    #dashboard {
+      position: fixed;
+      bottom: 0px;
+      right: 0px; 
+      background-color: red;    
+      height: 5%;
+      width: 10%;
+      padding-top: 10px;
+     
+    }
+    #dashboard:hover{
+      background-color: black;
+    }
+
+
+	</style>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+	<script src = "newtab.js"></script>
+   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+   <link href="https://mdbootstrap.com/wp-content/themes/mdbootstrap4/css/compiled-4.5.10.min.css" rel="stylesheet">
+
+	</HEAD>
+	<BODY>
+	<!--	<H4>Bestie</H4>
+		<HR></HR>
+		 <a id="analytics" href="#">Dashboard</a>
+
+-->
+<div class="container">
+<div class="jumbotron ">
+          <h1><span style="color:red">B</span><span style="color:orange">e</span><span style="color:purple">s</span><span style="color:green">t</span><span style="color:blue">i</span><span style="color:purple">e</span><span style="color:red">.</span><span style="color:orange">.</span><span style="color:gold">!</span></h1>      
+          <p>Hi, My name is Bestie. I will bring the best out of you. </p>
+        </div>  
+      </div>
+<div class ="form ">
+     <form class="form-inline md-form form-sm shadow p-3 mb-5 bg-white rounded" action="http://www.yahoo.com/search" method = "get">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search" name =  "q">
+    </form>
+  </div>
+
+    <div class = "container">
+		    <div id="canvas-holder" style="width:35%; display:inline-block;" >
+		       <canvas id="chart-area"></canvas>
+	     </div>
+    <div   id = "table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">
+	     <table id = "data_table" width = "100%" height = "250">
+          <col width="0">
+          <col width="200">
+          <col width="0">
+          <col width="0">
+          <col width="0">
+	        <col width="0">
+          <col width="0">
+          <col width="0">
+	        <col width="0">
+          <col width="0">
+          <thead style = "background-color: lightgrey; text-align: center; " id = "table_head">
+            <tr id = "table_head">
+              <td colspan="10" id = "table_head">
+                <span style="color: black">Today data</span>
+              </td>
+            </tr>
+          </thead>
+       </table>
+
+	 </div>
+  </div>
+
+
+  <span id = "dashboard" class = "badge " style="font-size: 20px">Dashboard</span>
+		 	
+	</BODY>
+
+</HTML>

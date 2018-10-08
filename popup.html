@@ -3,12 +3,70 @@
 <HTML>
 
 	<HEAD>
+		<style>
+			canvas {
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+			}
+
+			tr{
+				color:grey;
+			}
+
+	</style>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 	<script src = "popup.js"></script>
+
+
 	</HEAD>
 	<BODY>
 		<H4>Bestie</H4>
 		<HR></HR>
 		 <a id="analytics" href="#">Dashboard</a>
+
+		 <div id="canvas-holder" style="width:40%">
+		<canvas id="chart-area"></canvas>
+	</div>
+
+	<table id = "table">
+  <col width="200">
+  <col width="0">
+  <col width="0">
+   <col width="0">
+	 <col width="0">
+      <col width="0">
+        <col width="0">
+	 <col width="0">
+      <col width="0">
+  <tr id = "1">
+    <td>January</td>
+    <td>100.00</td>
+      <td>%</td>
+        <td>00</td>
+      <td>h</td>
+       <td>00</td>
+      <td>m</td>
+        <td>00</td>
+      <td>s</td>
+  </tr>
+
+   <tr id = "2">
+    <td>January</td>
+    <td>100.00</td>
+      <td>%</td>
+        <td>00</td>
+      <td>h</td>
+       <td>00</td>
+      <td>m</td>
+        <td>00</td>
+      <td>s</td>
+  </tr>
+ 
+</table>
+
+		 </div>
 		 	
 	</BODY>
 
