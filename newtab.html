@@ -2,115 +2,230 @@
 
 <HTML>
 
-	<HEAD>
-		<style>
-			canvas {
-			-moz-user-select: none;
-			-webkit-user-select: none;
-			-ms-user-select: none;
-			}
+<HEAD>
+  <style>
+  canvas {
+   -moz-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+ }
 
-			tr{
-				color:grey;
-			}
+ tr{
+  color:grey;
+}
 
-      #table{
-        margin-left: 20%;
-        margin-bottom:  5%;
-      }
+#table{
+  margin-left: 20%;
+  margin-bottom:  5%;
+}
 
-    #canvas-holder{
-      margin-left: 2%;
-       
-      
-    }
-
-    .form-inline{
-      width: 60%;
-      margin-left: 20%;
-    }
-    .jumbotron{
-        margin-top: 3%;
-        opacity: 0.85;
-    }
-    .form{
-      margin-top: 2%;
-    }
-    #dashboard {
-      position: fixed;
-      bottom: 0px;
-      right: 0px; 
-      background-color: red;    
-      height: 5%;
-      width: 10%;
-      padding-top: 10px;
-     
-    }
-    #dashboard:hover{
-      background-color: black;
-    }
+#canvas-holder{
+  margin-left: 2%;
 
 
-	</style>
+}
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-	<script src = "newtab.js"></script>
-   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+.form-inline{
+  width: 60%;
+  margin-left: 20%;
+}
+.jumbotron{
+  margin-top: 3%;
+  opacity: 0.85;
+}
+.form{
+  margin-top: 2%;
+}
+#dashboard {
+  position: fixed;
+  bottom: 0px;
+  right: 0px; 
+  background-color: red;    
+  height: 5%;
+  width: 10%;
+  padding-top: 10px;
 
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-   <link href="https://mdbootstrap.com/wp-content/themes/mdbootstrap4/css/compiled-4.5.10.min.css" rel="stylesheet">
+}
+#dashboard:hover{
+  background-color: black;
+}
 
-	</HEAD>
-	<BODY>
+#select_date{
+ background-color:purple; 
+}
+
+#select_date:hover{
+  background-color: black;
+}
+
+
+#analysis_header{
+   border: 1px solid silver;
+   background-color: silver;
+   width: 30%;
+   margin-left:auto;
+   margin-right: auto;
+   padding: 10px;
+    border-radius: 5px;
+}
+
+
+#today{
+  margin-left: 7%;
+  font-weight: bold;
+
+}
+
+#select_day{
+  margin-left: 10%;
+  font-weight: bold;
+  color: grey;
+}
+
+
+#stats{
+  margin-left: 10%;
+  font-weight: bold;
+  color: grey;
+}
+#all_time{
+  margin-left: 10%;
+  font-weight: bold;
+  color: grey;
+}
+
+#select_day:hover{
+  color: black;
+}
+#today:hover{
+  color: black;
+}
+#daily_avg:hover{
+  color: black;
+}
+#stats:hover{
+  color: black;
+}
+#all_time:hover{
+  color: black;
+}
+
+#datepick{
+  margin-left: 40%;
+  visibility: hidden;
+  margin-top: 1%;
+}
+
+#close{
+      float: right;
+    position: relative;
+    display: inline-block;
+}
+
+#statistics{
+ 
+  margin-top: 10%;
+}
+
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://mdbootstrap.com/wp-content/themes/mdbootstrap4/css/compiled-4.5.10.min.css" rel="stylesheet">
+<script src = "newtab.js"></script>
+</HEAD>
+<BODY>
 	<!--	<H4>Bestie</H4>
 		<HR></HR>
 		 <a id="analytics" href="#">Dashboard</a>
 
--->
-<div class="container">
-<div class="jumbotron ">
-          <h1><span style="color:red">B</span><span style="color:orange">e</span><span style="color:purple">s</span><span style="color:green">t</span><span style="color:blue">i</span><span style="color:purple">e</span><span style="color:red">.</span><span style="color:orange">.</span><span style="color:gold">!</span></h1>      
-          <p>Hi, My name is Bestie. I will bring the best out of you. </p>
-        </div>  
-      </div>
-<div class ="form ">
+    -->
+    <div class="container">
+
+      <div class="jumbotron ">
+        <h1><span style="color:red">B</span><span style="color:orange">e</span><span style="color:purple">s</span><span style="color:green">t</span><span style="color:blue">i</span><span style="color:purple">e</span><span style="color:red">.</span><span style="color:orange">.</span><span style="color:gold">!</span></h1>      
+        <p>Hi, My name is Bestie. I will bring the best out of you. </p>
+      </div> 
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+
+
+    <div class ="form ">
      <form class="form-inline md-form form-sm shadow p-3 mb-5 bg-white rounded" action="http://www.yahoo.com/search" method = "get">
-    <i class="fa fa-search" aria-hidden="true"></i>
-    <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search" name =  "q">
+      <i class="fa fa-search" aria-hidden="true"></i>
+      <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search" name =  "q">
     </form>
   </div>
 
-    <div class = "container">
-		    <div id="canvas-holder" style="width:35%; display:inline-block;" >
-		       <canvas id="chart-area"></canvas>
-	     </div>
-    <div   id = "table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">
-	     <table id = "data_table" width = "100%" height = "250">
-          <col width="0">
-          <col width="200">
-          <col width="0">
-          <col width="0">
-          <col width="0">
-	        <col width="0">
-          <col width="0">
-          <col width="0">
-	        <col width="0">
-          <col width="0">
-          <thead style = "background-color: lightgrey; text-align: center; " id = "table_head">
-            <tr id = "table_head">
-              <td colspan="10" id = "table_head">
-                <span style="color: black">Today data</span>
-              </td>
-            </tr>
-          </thead>
-       </table>
 
-	 </div>
+  <div id = "analysis_header">
+    <span id = "today"> Today</span> <span id = "select_day">Select Day</span> <span id = "all_time">All Time</span> <span id = "stats">Stats</span>
   </div>
 
+<div>
+  <div id = "datepick" style="display: inline-block;">
+      <input type="date" id = "date_selector">
+      <span id = "select_date" class = "badge " style="font-size: 16px">Select Date</span>
+  </div>
 
-  <span id = "dashboard" class = "badge " style="font-size: 20px">Dashboard</span>
-		 	
-	</BODY>
+</div>
+ 
+
+
+  <div class = "container" id = "check">
+    
+    <div id="canvas-holder" style="width:35%; display:inline-block;" >
+     <canvas id="chart-area"></canvas>
+   </div>
+
+   <div   id = "table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">
+    
+    <table id = "data_table" width = "100%" height = "250">
+      <col width="0">
+      <col width="200">
+      <col width="0">
+      <col width="0">
+      <col width="0">
+      <col width="0">
+      <col width="0">
+      <col width="0">
+      <col width="0">
+      <col width="0">
+      <thead style = "background-color: lightgrey; text-align: center; " id = "table_head">
+        <tr id = "table_head">
+          <td colspan="10" id = "table_head">
+            <span style="color: black">Today data</span>
+          </td>
+        </tr>
+      </thead>
+    </table>
+
+  </div>
+
+</div>
+
+<div id = "statistics" class = "container shadow-lg p-3 mb-5 bg-white rounded">
+  <span id = "close">X</span>
+<H4>OverAll Stats</H4>
+</div>
+
+
+<span id = "dashboard" class = "badge " style="font-size: 20px">Dashboard</span>
+
+</BODY>
 
 </HTML>

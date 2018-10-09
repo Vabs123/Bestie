@@ -13,7 +13,9 @@ var totalTimeSpend = 0;
 var dataTable = null;
 var cur = null;
 var curRow = null;
-
+var active = null;
+var setOfKeys = new Set(['socialSites', 'notificationTime']);
+var activeAnalysisHeader = null;
 
 Chart.pluginService.register({
 		beforeDraw: function (chart) {
@@ -130,7 +132,12 @@ function getTimeSpend(time){
 	return ""+time+","+min+","+sec;
 }
 
+
+
 window.onload = function(){
+
+
+//	document.getElementById("date_selector").datepicker();
 	//console.log("hello");
 //	document.body.style.backgroundImage = "url('img.jpg')";
 	initiallize();
@@ -138,6 +145,9 @@ window.onload = function(){
 }
 
 function initiallize(){
+	document.getElementById("analysis_header").addEventListener("click", getTypeOfAnalysis);
+	document.getElementById("select_date").addEventListener("click", getAnalysisForSelectedDay);
+	activeAnalysisHeader = document.getElementById("today");
 	canvas = document.getElementById("chart-area");
 	ctx = canvas.getContext("2d");
 	todayAnalysis = new Chart(ctx, config);
@@ -145,16 +155,60 @@ function initiallize(){
 	dataTable = document.getElementById("data_table");
 	document.getElementById("dashboard").addEventListener("click", showAnalytics);
 	setListenersToTable();
-	showChart();
+	showChart(new Date());
 	setDoughnutListeners();
 }
 
 
+function getAnalysisForSelectedDay(){
+	var datePicker = document.getElementById("date_selector").value;
+	showChart(new Date(datePicker));
+}	
 
-function showChart(){
-	var today = new Date();
-	var key = ""+today.getFullYear()+today.getMonth()+today.getDate();
-	chrome.storage.sync.get([key],function(result){
+function getTypeOfAnalysis(e){
+
+	if(e.target.id != "analysis_header"){
+		var datePickerDiv = document.getElementById("datepick");
+		datePickerDiv.style.visibility="hidden";
+		activeAnalysisHeader.style.color = "grey";
+		activeAnalysisHeader = e.target;
+	}
+	if(activeAnalysisHeader.id === "today"){
+		activeAnalysisHeader.style.color = "black";
+		showChart(new Date());
+	
+	}
+	else if(activeAnalysisHeader.id === "select_day"){
+		activeAnalysisHeader.style.color = "black";
+		datePickerDiv.style.visibility="visible";
+
+		
+		//var date = document.getElementById("date_selector").value;
+		//showChart(new Date(date));
+	}
+	else if(activeAnalysisHeader.id === "all_time"){
+		activeAnalysisHeader.style.color = "black";
+		showChart(null);
+	}
+	else if(activeAnalysisHeader.id === "stats"){
+		activeAnalysisHeader.style.color = "black";
+	}	
+}
+
+
+
+function showChart(date){
+	data = [];
+	totalTimeSpend = 0;
+	bColor = [];
+	labels = [];
+	var today = date;
+	dataTable.innerHTML="";
+//	dataTable.style.visibility = "hidden";
+	var key = null;
+	if(date != null)
+		key = ""+today.getFullYear()+today.getMonth()+today.getDate();
+	chrome.storage.sync.get(key,function(result){
 		console.log(result[key]);
 		if(result[key]){
 			var summary = result[key]["summary"];
@@ -167,8 +221,38 @@ function showChart(){
 				bColor.push(BGCOLOR[i++]);
 			}
 			todayData.datasets[0].backgroundColor = bColor;
-			todayData.datasets[0].data = data;	
-			createTable(result[key]);
+			todayData.datasets[0].data = data;
+
+			createTable(result[key]["summary"]);
+			todayData.labels = labels;
+
+		}
+		else if(date === null){
+			var tt = 0;
+			var totalSummary = {};
+			for(var k in result){
+				if(setOfKeys.has(k))
+					continue;
+				var summary = result[k]["summary"];
+				for(var site in summary){
+					if(!totalSummary.hasOwnProperty(site))
+						totalSummary[site] = 0;
+					totalSummary[site] += summary[site];
+				}
+			}
+			var i = 0;
+			for(var site in totalSummary){
+				data.push(((+totalSummary[site])));
+				totalTimeSpend += (+totalSummary[site]);
+				console.log("Total Time Spend Today = " + totalTimeSpend);
+				//labels.push(site);
+				tt = totalTimeSpend;
+				bColor.push(BGCOLOR[i++]);
+			}
+			todayData.datasets[0].backgroundColor = bColor;
+			todayData.datasets[0].data = data;
+
+			createTable(totalSummary);
 			todayData.labels = labels;
 
 		}
@@ -259,8 +343,8 @@ canvas.onmouseout =function(e){
 
 function createTable(result){
 	var i = 0;
-	for (var key in result["summary"]){
-		dataTable.appendChild(createRow(result["summary"], key, i));
+	for (var key in result){
+		dataTable.appendChild(createRow(result, key, i));
 		i++;
 	}
 }
