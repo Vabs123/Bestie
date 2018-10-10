@@ -7,6 +7,10 @@ var BGCOLOR = ["red","orange","purple", "#0000FF", "#8A2BE2", "#A52A2A", "#5F9EA
 var bColor = [];
 var canvas = null;
 var ctx = null;
+var barCanvas = null;
+var barCtx = null;
+var barAnalysis = null;
+var barData = null;
 var todayAnalysis = null;
 var todayData = null;
 var totalTimeSpend = 0;
@@ -16,26 +20,27 @@ var curRow = null;
 var active = null;
 var setOfKeys = new Set(['socialSites', 'notificationTime']);
 var activeAnalysisHeader = null;
+var activeStatsHeader = null;
 
 Chart.pluginService.register({
-		beforeDraw: function (chart) {
-			if (chart.config.options.elements.center) {
+	beforeDraw: function (chart) {
+		if (chart.config.options.elements.center) {
         //Get ctx from string
         var ctx = chart.chart.ctx;
         
 				//Get options from the center object in options
-        var centerConfig = chart.config.options.elements.center;
-      	var fontStyle = centerConfig.fontStyle || 'Arial';
-		var txt = centerConfig.text;
-        var color = centerConfig.color || '#000';
-        var sidePadding = centerConfig.sidePadding || 20;
-        var sidePaddingCalculated = (sidePadding/100) * (chart.innerRadius * 2)
+				var centerConfig = chart.config.options.elements.center;
+				var fontStyle = centerConfig.fontStyle || 'Arial';
+				var txt = centerConfig.text;
+				var color = centerConfig.color || '#000';
+				var sidePadding = centerConfig.sidePadding || 20;
+				var sidePaddingCalculated = (sidePadding/100) * (chart.innerRadius * 2)
         //Start with a base font of 30px
         ctx.font = "30px " + fontStyle;
         
 				//Get the width of the string and also the width of the element minus 10 to give it 5px side padding
-        var stringWidth = ctx.measureText(txt).width;
-        var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
+				var stringWidth = ctx.measureText(txt).width;
+				var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
 
         // Find out how much the font can grow in width.
         var widthRatio = elementWidth / stringWidth;
@@ -46,48 +51,48 @@ Chart.pluginService.register({
         var fontSizeToUse = Math.min(newFontSize, elementHeight);
 
 				//Set font settings to draw it correctly.
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
-        var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
-        ctx.font = fontSizeToUse+"px " + fontStyle;
-        ctx.fillStyle = color;
-        
+				ctx.textAlign = 'center';
+				ctx.textBaseline = 'middle';
+				var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
+				var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
+				ctx.font = fontSizeToUse+"px " + fontStyle;
+				ctx.fillStyle = color;
+
         //Draw text in center
         ctx.fillText(txt, centerX, centerY);
-			}
-		}
-	});
+    }
+}
+});
 
 
-		var config = {
-			type: 'doughnut',
-			data: {
+var config = {
+	type: 'doughnut',
+	data: {
 			//	mousemove: abc,
-				datasets: [{
-					data: [
-						1,2,3,4,5
-					],
-					"backgroundColor":["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"],
+			datasets: [{
+				data: [
+				1,2,3,4,5
+				],
+				"backgroundColor":["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"],
 					//"hoverBorderColor":["rgb(255, 91, 132)","rgb(54, 62, 235)","rgb(255, 5, 86)"],
 					
 					label: 'Today Analysis'
 				}],
 				labels: [
-					'January 100% 00h 00m 00s',
-					'Orange',
-					'Yellow',
-					'Green',
-					'Blue'
+				'January 100% 00h 00m 00s',
+				'Orange',
+				'Yellow',
+				'Green',
+				'Blue'
 				]
 			},
 			options: {
 				//onHover: abc,
 				responsive: true,
-				 legend: {
-    	display: false
-    			},
-  			
+				legend: {
+					display: false
+				},
+
 				title: {
 					display: false,
 					text: "Bestie Today's Analysis"
@@ -99,20 +104,40 @@ Chart.pluginService.register({
 				events:["mousemove", "mouseout", "click", "touchstart", "touchmove"],
 
 				elements: {
-						center: {
-									text: '',
+					center: {
+						text: '',
           							color: '#FF6384', // Default is #000000
           							fontStyle: 'Arial', // Default is Arial
           							sidePadding: 20 // Defualt is 20 (as a percentage)
-				}
-			},
+          						}
+          					},
 				// events.click: function(e){alert("s")},
 				// onHover: function (e,t){
 				// 		alert("Event = " + e+" \n Part clicked  - ");
 				// }
-			
+
 			}
-};
+		};
+
+		var barConfig = {
+			type: 'horizontalBar',
+			data: {
+				labels:['1'],
+				datasets:[{
+					label:'No Data',
+					data:[1]
+				}
+				]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio:false,
+				scales: {
+					xAxes: [{ stacked: true }],
+					yAxes: [{ stacked: true }]
+				}
+			}
+		};
 
 
 
@@ -146,19 +171,137 @@ window.onload = function(){
 
 function initiallize(){
 	document.getElementById("analysis_header").addEventListener("click", getTypeOfAnalysis);
+	document.getElementById("stats_header").addEventListener("click", getTypeOfStats);
 	document.getElementById("select_date").addEventListener("click", getAnalysisForSelectedDay);
+	document.getElementById("select_month").addEventListener("click", getStatsForSelectedMonth);
+	document.getElementById("select_range").addEventListener("click", getStatsForSelectedRange);
+
 	activeAnalysisHeader = document.getElementById("today");
 	canvas = document.getElementById("chart-area");
 	ctx = canvas.getContext("2d");
 	todayAnalysis = new Chart(ctx, config);
 	todayData = todayAnalysis.chart.config.data;
 	dataTable = document.getElementById("data_table");
+
+
+	barCanvas = document.getElementById('bar-chart-area');
+	barCtx = barCanvas.getContext("2d");
+	barAnalysis = new Chart(barCtx, barConfig);
+	barData = barAnalysis.chart.config.data;
+
+
+
+	activeStatsHeader = document.getElementById("month_header");
+
+
 	document.getElementById("dashboard").addEventListener("click", showAnalytics);
 	setListenersToTable();
-	showChart(new Date());
+	var curDate = new Date();
+	showChart(curDate);
 	setDoughnutListeners();
+	showStats(curDate.getMonth(), null);
 }
 
+function getTypeOfStats(e){
+	if(e.target.id === "month_header"){
+		activeStatsHeader.style.color = "grey";
+		activeStatsHeader = e.target;
+		activeStatsHeader.style.color = "black";
+		document.getElementById("custompick").style.display="none";
+		document.getElementById("monthpick").style.display = "inline-block";
+		
+	
+	}
+	else if(e.target.id === "custom_range"){
+		activeStatsHeader.style.color = "grey";
+		activeStatsHeader = e.target;
+		activeStatsHeader.style.color = "black";
+		document.getElementById("custompick").style.display="block";
+		document.getElementById("monthpick").style.display = "none";
+	}
+} 
+
+
+function showStats(date1, date2){
+
+	fetchStatsData(new Date("2018","09","08"), new Date("2018","09","10"));
+}
+
+//2018912
+function fetchStatsData(date1, date2){
+	var barDataset = {
+		totalTime:[]
+	}
+	var labelsOfBarChart = [];
+	chrome.storage.sync.get(null, function(result){
+		var sites = result["socialSites"];
+		for(var site of sites){
+			barDataset[site] = [];
+		}
+		var d = date1;
+		while(d <= date2){
+			var totalTime = 0;
+			var key = getKey(d);
+			if(result.hasOwnProperty(key)){
+				for(var site in result[key]["summary"]){
+					if(barDataset.hasOwnProperty(site)){
+						var time = (+result[key]["summary"][site]);
+						barDataset[site].push(time);
+						totalTime += time;
+					}
+				}
+				barDataset["totalTime"].push(totalTime);
+			}
+			else{
+				for(var site in barDataset)
+					barDataset[site].push(0);
+			}
+			labelsOfBarChart.push(d.toDateString());
+			d.setDate(d.getDate() + 1);
+		}
+		showBarChart(barDataset, labelsOfBarChart);
+	});
+} 
+
+//todayData.datasets[0].data = data;
+function showBarChart(barDataset, labelsOfBarChart){
+	var dataOfBarChart = [];
+	var i = 0;
+	for(var key in barDataset)
+		if(key != "totalTime")
+		dataOfBarChart.push({label:key,data:barDataset[key], backgroundColor:BGCOLOR[i++]});
+	
+	barData.datasets = dataOfBarChart;
+	barData.labels = labelsOfBarChart;
+	document.getElementById("bar-canvas-holder").style.height = 80*labelsOfBarChart.length+"px";
+
+	barAnalysis.update();
+
+	barAnalysis.render();
+}
+
+function getKey(date){
+	var key = ""+date.getFullYear()+date.getMonth()+date.getDate();
+//	console.log("Key to be searched = ", key);
+	return key;
+}
+
+
+function getStatsForSelectedMonth(){
+	var selectedMonthYear = document.getElementById("month");
+	var timeparts = selectedMonthYear.value.split("-");
+	var date1 = new Date(timeparts[0],+timeparts[1]-1,"1");
+	var date2 = new Date(timeparts[0],timeparts[1],"0");
+	fetchStatsData(date1, date2);
+}
+
+function getStatsForSelectedRange(){
+	var day1 = document.getElementById("custom_date1");
+	var day2 = document.getElementById("custom_date2");
+	var timeparts1 = day1.value.split("-");
+	var timeparts2 = day2.value.split("-");
+	fetchStatsData(new Date(timeparts1[0],+timeparts1[1]-1,timeparts1[2]), new Date(timeparts2[0],+timeparts2[1]-1,timeparts2[2]));
+}
 
 function getAnalysisForSelectedDay(){
 	var datePicker = document.getElementById("date_selector").value;
@@ -166,7 +309,7 @@ function getAnalysisForSelectedDay(){
 }	
 
 function getTypeOfAnalysis(e){
-
+	//alert(e.target.id);
 	if(e.target.id != "analysis_header"){
 		var datePickerDiv = document.getElementById("datepick");
 		datePickerDiv.style.visibility="hidden";
@@ -192,7 +335,9 @@ function getTypeOfAnalysis(e){
 	}
 	else if(activeAnalysisHeader.id === "stats"){
 		activeAnalysisHeader.style.color = "black";
-	}	
+	}
+
+
 }
 
 
@@ -438,3 +583,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
  function showAnalytics(){
  	chrome.tabs.create({"url":chrome.runtime.getURL("analytics.html")});
  }
+
+ function daysInMonth(month, year) {
+    return new Date(year, month, 0).getDate();
+}

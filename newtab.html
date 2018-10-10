@@ -58,6 +58,24 @@
   background-color: black;
 }
 
+#select_month{
+ background-color:purple; 
+}
+
+#select_month:hover{
+  background-color: black;
+}
+
+#select_range{
+ background-color:purple; 
+ margin-top: 3%;
+ margin-left:21%;
+}
+
+#select_range:hover{
+  background-color: black;
+}
+
 
 #analysis_header{
    border: 1px solid silver;
@@ -66,8 +84,20 @@
    margin-left:auto;
    margin-right: auto;
    padding: 10px;
+  border-radius: 5px;
+}
+
+#stats_header{
+   border: 1px solid silver;
+   background-color: silver;
+   width: 30%;
+   margin-left:auto;
+   margin-right: auto;
+   margin-top: 5%;
+   padding: 10px;
     border-radius: 5px;
 }
+
 
 
 #today{
@@ -97,12 +127,11 @@
 #select_day:hover{
   color: black;
 }
+
 #today:hover{
   color: black;
 }
-#daily_avg:hover{
-  color: black;
-}
+
 #stats:hover{
   color: black;
 }
@@ -116,6 +145,39 @@
   margin-top: 1%;
 }
 
+#monthpick{
+  margin-left: 35%;
+  visibility: visible;
+  margin-top: 1%;
+}
+
+#custompick{
+  margin-left: 30%;
+  visibility: visible;
+  margin-top: 1%;
+   display: none;
+}
+
+
+#month_header{
+  margin-left: 9%;
+  font-weight: bold;
+}
+
+#custom_range{
+  margin-left: 10%;
+  font-weight: bold;
+  color: grey;
+
+}
+
+#month_header:hover{
+  color: black;
+}
+#custom_range:hover{
+  color: black;
+}
+
 #close{
       float: right;
     position: relative;
@@ -127,6 +189,13 @@
   margin-top: 10%;
 }
 
+#fix {
+    background-color:#ddd;
+    position: fixed;
+    padding: 2em;
+    left: 50%;
+    top: 0%;
+  
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
@@ -138,8 +207,8 @@
 <link href="https://mdbootstrap.com/wp-content/themes/mdbootstrap4/css/compiled-4.5.10.min.css" rel="stylesheet">
 <script src = "newtab.js"></script>
 </HEAD>
-<BODY>
-	<!--	<H4>Bestie</H4>
+<BODY >
+  	<!--	<H4>Bestie</H4>
 		<HR></HR>
 		 <a id="analytics" href="#">Dashboard</a>
 
@@ -150,14 +219,6 @@
         <h1><span style="color:red">B</span><span style="color:orange">e</span><span style="color:purple">s</span><span style="color:green">t</span><span style="color:blue">i</span><span style="color:purple">e</span><span style="color:red">.</span><span style="color:orange">.</span><span style="color:gold">!</span></h1>      
         <p>Hi, My name is Bestie. I will bring the best out of you. </p>
       </div> 
-
-
-
-
-
-
-
-
 
 
     </div>
@@ -173,7 +234,7 @@
 
 
   <div id = "analysis_header">
-    <span id = "today"> Today</span> <span id = "select_day">Select Day</span> <span id = "all_time">All Time</span> <span id = "stats">Stats</span>
+    <span id = "today"> Today</span> <span id = "select_day">Select Day</span> <span id = "all_time">All Time</span><a href="#statistics"> <span id = "stats" >Stats</span></a>
   </div>
 
 <div>
@@ -218,11 +279,40 @@
 
 </div>
 
+
+
 <div id = "statistics" class = "container shadow-lg p-3 mb-5 bg-white rounded">
   <span id = "close">X</span>
 <H4>OverAll Stats</H4>
+
+ <div>
+
+ <div id = "stats_header">
+    <span id = "month_header"> Month</span> <span id = "custom_range">Select Custom Range</span> 
+  </div>
+
+<div id = "monthpick" style="display: inline-block; margin-top: 3%;">
+    <input type="month" id = "month">
+      <span id = "select_month" class = "badge " style="font-size: 16px">Select Month & Year</span>
 </div>
 
+<div id = "custompick" style=" margin-top: 3%;">
+    <input type="date" id = "custom_date1">
+   <span style="margin-left: 5%; margin-right: 5%; "><b> to </b></span>
+     <input type="date" id = "custom_date2">
+     <br>
+      <span id = "select_range" class = "badge " style="font-size: 16px">Select Range</span>
+</div>
+
+</div>
+
+
+
+
+<div id="bar-canvas-holder" style="width:75%; height:240px;margin-top:5%; position: relative;" >
+     <canvas id="bar-chart-area"></canvas>
+</div>
+</div>
 
 <span id = "dashboard" class = "badge " style="font-size: 20px">Dashboard</span>
 

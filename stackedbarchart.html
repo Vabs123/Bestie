@@ -1,0 +1,48 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>My Stacked Bar Chart</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js"></script>
+  </head>
+  <body>
+
+    <canvas id="chart"></canvas>
+     	<div  class="position-fixed">hello</div>
+  </body>
+
+  <script>
+  	var ctx = document.getElementById('chart');
+
+  	var myChart = new Chart(ctx, {
+  		type: 'horizontalBar',
+  		data: {
+  			labels: ['', 'A'],
+  			datasets: [
+  			{
+  				label: 'Low',
+  				data: [67.8],
+  				backgroundColor: '#D6E9C6',
+  			},
+  			{
+  				label: 'Moderate',
+  				data: [20.7],
+  				backgroundColor: '#FAEBCC',
+  			},
+  			{
+  				label: 'High',
+  				data: [11.4],
+  				backgroundColor: '#EBCCD1',
+  			}
+  			]
+  		},
+  		options: {
+  			scales: {
+  				xAxes: [{ stacked: true }],
+  				yAxes: [{ stacked: true }]
+  			}
+  		}
+  	});
+</script>
+</html>
