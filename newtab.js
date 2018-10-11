@@ -574,16 +574,29 @@ function createRow(result, key, id){
 	percentageMark.textContent = "%";
 	var hour = document.createElement('TD');
 	hour.textContent = hours;
+
 	var hMark = document.createElement('TD');
 	hMark.textContent = "h";
+	if(hours != "00"){
+		hour.style.color = "black";
+		hMark.style.color = "black";
+	}
 	var min = document.createElement('TD');
 	min.textContent = mins;
 	var mMark = document.createElement('TD');
 	mMark.textContent = "m";
+	if(mins != "00"){
+		min.style.color = "black";
+		mMark.style.color = "black";
+	}
 	var sec = document.createElement('TD');
 	sec.textContent = secs;
 	var sMark = document.createElement('TD');
 	sMark.textContent = "s";
+	if(secs != "00"){
+		sec.style.color = "black";
+		sMark.style.color = "black";
+	}
 
 	row.appendChild(label);
 	row.appendChild(domain);
