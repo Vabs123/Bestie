@@ -3,7 +3,33 @@
 <HTML>
 
 <HEAD>
-  <style>
+ 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link href="https://mdbootstrap.com/wp-content/themes/mdbootstrap4/css/compiled-4.5.10.min.css" rel="stylesheet">
+<script src = "newtab.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <style>
   canvas {
    -moz-user-select: none;
    -webkit-user-select: none;
@@ -12,16 +38,19 @@
 
  tr{
   color:grey;
+  cursor: pointer;
 }
+
 
 #table{
-  margin-left: 20%;
-  margin-bottom:  5%;
+  margin-left: 14%;
+  
 }
 
-#canvas-holder{
-  margin-left: 2%;
 
+#canvas-holder{
+  margin-left: 0%;
+cursor: pointer;
 
 }
 
@@ -48,6 +77,7 @@
 }
 #dashboard:hover{
   background-color: black;
+  cursor: pointer;
 }
 
 #select_date{
@@ -84,16 +114,18 @@
    margin-left:auto;
    margin-right: auto;
    padding: 10px;
+   font-size: 16px;
   border-radius: 5px;
 }
 
 #stats_header{
    border: 1px solid silver;
    background-color: silver;
-   width: 30%;
+   width: 45%;
    margin-left:auto;
    margin-right: auto;
    margin-top: 5%;
+      font-size: 16px;
    padding: 10px;
     border-radius: 5px;
 }
@@ -126,17 +158,21 @@
 
 #select_day:hover{
   color: black;
+  cursor: pointer;
 }
 
 #today:hover{
+  cursor: pointer;
   color: black;
 }
 
 #stats:hover{
   color: black;
+  cursor: pointer;
 }
 #all_time:hover{
   color: black;
+  cursor: pointer;
 }
 
 #datepick{
@@ -160,8 +196,9 @@
 
 
 #month_header{
-  margin-left: 9%;
+
   font-weight: bold;
+  color: grey;
 }
 
 #custom_range{
@@ -173,15 +210,18 @@
 
 #month_header:hover{
   color: black;
+  cursor: pointer;
 }
 #custom_range:hover{
   color: black;
+  cursor: pointer;
 }
 
 #close{
       float: right;
     position: relative;
     display: inline-block;
+    cursor: pointer;  
 }
 
 #statistics{
@@ -195,17 +235,166 @@
     padding: 2em;
     left: 50%;
     top: 0%;
+  }
+
+
+ table td {
+    font-size: 20px;
+    font-weight: 300;
+}
+
+.dropdown-menu {
+    font-size: 16px;
+    width: 100%;
+    color: grey;
+  }
+
+  #default_ranges:hover{
+    color: black;
+  }
+    #default_ranges{
+    font-weight: bold;
+  }
+
+
+ .dropdown-menu li a{
+  color: grey;
+  font-weight: bold;
+}
   
+
+
+
+
+  .searchformwrap {
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .searchformwrap  .search-text {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 0px 50px 0px 15px;
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 16px;
+    color: #000000;
+    border: none;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
+    height: 50px;
+    outline: none;
+    border-radius: 40px;
+    transition: all 200ms cubic-bezier(0.4,0.0,0.2,1);
+    -webkit-transition: all 200ms cubic-bezier(0.4,0.0,0.2,1);
+    cursor: text;
+    line-height: 1;
+    -webkit-appearance: none;
+  }
+  .searchformwrap  .search-text:hover, .searchformwrap .search-text:focus{
+    box-shadow: 0 3px 8px 0 rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.08)
+  }
+  .searchformwrap .tsbar {
+    box-shadow: 0 3px 8px 0 rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.08);
+    -webkit-box-shadow: 0 3px 8px 0 rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.08);
+    border-radius: 2px;
+  }
+  /* .search-text:focus + .searchicon #Group-18{fill:#0f69ff} */
+  .searchformwrap #Group-18{fill:#0f69ff}
+  .searchformwrap .search-text::-webkit-input-placeholder {
+    color: rgba(0,0,0,0.42)
+  }
+  
+  .searchformwrap .searchicon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 0;
+    width: 50px;
+    height: 50px;
+    background: transparent;
+    outline: 0 !important;
+    cursor: pointer
+  }
+  .ui-helper-hidden {display: none}
+  .ui-helper-hidden-accessible{border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}
+  .ui-helper-reset{margin:0;padding:0;border:0;outline:0;line-height:1.3;text-decoration:none;font-size:100%;list-style:none}
+  .ui-helper-clearfix:after,.ui-helper-clearfix:before{content:"";display:table;border-collapse:collapse}
+  .ui-helper-clearfix:after {clear: both}
+  .ui-helper-zfix{width:100%;height:100%;top:0;left:0;position:absolute;opacity:0;filter:Alpha(Opacity=0)}
+  .ui-front {z-index: 100}
+  
+  .ui-autocomplete{position:absolute;top:50px !important;left:0 !important;cursor:default}
+  .ui-menu{list-style:none;padding:0;margin:0;display:block;outline:0}
+  .ui-menu .ui-menu {position: absolute}
+  .ui-widget-content{border:0px solid #ddd;background:#fff;color:#333; z-index: 9999;border-radius: 0px;box-shadow: 0 3px 8px 0 rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.08);}
+  .ui-menu .ui-menu-item{cursor: pointer}
+  .ui-menu .ui-menu-item-wrapper {position: relative;
+    padding: 2px 15px;
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 16px;
+    color: #000000;
+    font-weight: 700;}
+  .ui-menu .ui-menu-item-wrapper b{font-weight: 400}
+  .ui-state-active,
+  .ui-widget-content .ui-state-active,
+  .ui-widget-header .ui-state-active,
+  a.ui-button:active,
+  .ui-button:active,
+  .ui-button.ui-state-active:hover {background: #eee;font-weight: 700 !important;color: #000}
+
+  @-webkit-keyframes hover-pulse {  25% {    -webkit-transform: scale(1);    transform: scale(1);  }  75% {    -webkit-transform: scale(0.9);    transform: scale(0.9);  }}@keyframes hover-pulse {  25% {    -webkit-transform: scale(1);    transform: scale(1);  }  75% {    -webkit-transform: scale(0.9);    transform: scale(0.9);  }}.hover-pulse {  display: inline-block;  vertical-align: middle;  -webkit-transform: translateZ(0);  transform: translateZ(0);  box-shadow: 0 0 1px rgba(0, 0, 0, 0);  -webkit-backface-visibility: hidden;  backface-visibility: hidden;  -moz-osx-font-smoothing: grayscale;}.hover-pulse:hover, .hover-pulse:focus, .hover-pulse:active {  -webkit-animation-name: hover-pulse;  animation-name: hover-pulse;  -webkit-animation-duration: 1s;  animation-duration: 1s;  -webkit-animation-timing-function: linear;  animation-timing-function: linear;  -webkit-animation-iteration-count: 2;  animation-iteration-count: 2;}@-webkit-keyframes hover-pulse {  25% {    -webkit-transform: scale(1);    transform: scale(1);  }  75% {    -webkit-transform: scale(0.9);    transform: scale(0.9);  }}@keyframes hover-pulse {  25% {    -webkit-transform: scale(1);    transform: scale(1);  }  75% {    -webkit-transform: scale(0.9);    transform: scale(0.9);  }}.hover-pulse { -webkit-animation-name: hover-pulse;  animation-name: hover-pulse;  -webkit-animation-duration: 1s;  animation-duration: 1s;  -webkit-animation-timing-function: linear;  animation-timing-function: linear;  -webkit-animation-iteration-count: 2;  animation-iteration-count: 2; }
+
+  .bgColor {
+        animation: bgColor 5s ease-out 2;
+        -webkit-animation: bgColor 5s ease-out 2;
+    } 
+    @-webkit-keyframes bgColor {
+    0%{
+      fill: #7aacff;
+    }
+    30%{
+      fill: #DF56FF;
+    }
+    60%{
+      fill: #E09F00;
+    }
+    100%{
+      fill: #7aacff;
+    }
+  }
+  @keyframes bgColor {
+    0%{
+      fill: #7aacff;
+    }
+    30%{
+      fill: #DF56FF;
+    }
+    60%{
+      fill: #E09F00;
+    }
+    100%{
+      fill: #7aacff;
+    }
+  }
+
+
+
+
 </style>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href="https://mdbootstrap.com/wp-content/themes/mdbootstrap4/css/compiled-4.5.10.min.css" rel="stylesheet">
-<script src = "newtab.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
 </HEAD>
 <BODY >
   	<!--	<H4>Bestie</H4>
@@ -225,12 +414,9 @@
 
 
 
-    <div class ="form ">
-     <form class="form-inline md-form form-sm shadow p-3 mb-5 bg-white rounded" action="http://www.yahoo.com/search" method = "get">
-      <i class="fa fa-search" aria-hidden="true"></i>
-      <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search" name =  "q">
-    </form>
-  </div>
+    <div class ="form " style="width: 50%; margin-left: 25%; margin-bottom: 2%">
+      <div class="searchformwrap ui-widget"> <form id="searchform" class="search-form"> <input type="text" autofocus="" class="search-text ui-autocomplete-input" name="search-text" id="search-text" autocomplete="off" placeholder="Search" value=""> <button class="searchicon submit-btn hover-pulse" id="submit-btn" aria-label="Search"> <svg width="18px" height="18px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="sch1" transform="translate(-275.000000, -265.000000)"> <rect fill="#FFFFFF" x="0" y="0" width="1024" height="650"></rect> <g id="Group-18" class="bgColor" transform="translate(260.000000, 252.000000)" fill="#CCCCCC" fill-rule="nonzero"> <g id="Group-6"> <g id="Group-5"> <g id="Group-21" transform="translate(15.000000, 13.000000)"> <g id="Search"> <path d="M15.8040816,14.8636735 L11.957551,11.0171429 C12.9110204,9.85469388 13.4857143,8.36571429 13.4857143,6.74285714 C13.4857143,3.02040816 10.4653061,0 6.74285714,0 C3.01714286,0 0,3.02040816 0,6.74285714 C0,10.4653061 3.01714286,13.4857143 6.74285714,13.4857143 C8.36571429,13.4857143 9.85142857,12.9142857 11.0138776,11.9608163 L14.8604082,15.8040816 C15.1216327,16.0653061 15.5428571,16.0653061 15.8040816,15.8040816 C16.0653061,15.5461224 16.0653061,15.1216327 15.8040816,14.8636735 Z M6.74285714,12.1436735 C3.76163265,12.1436735 1.33877551,9.72081633 1.33877551,6.74285714 C1.33877551,3.76489796 3.76163265,1.33877551 6.74285714,1.33877551 C9.72081633,1.33877551 12.1469388,3.76489796 12.1469388,6.74285714 C12.1469388,9.72081633 9.72081633,12.1436735 6.74285714,12.1436735 Z" id="Shapesch"></path> </g> </g> </g> </g> </g> </g> </g> </svg> </button> <ul id="ui-id-1" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></form> </div>
+    </div>
 
 
   <div id = "analysis_header">
@@ -249,13 +435,13 @@
 
   <div class = "container" id = "check">
     
-    <div id="canvas-holder" style="width:35%; display:inline-block;" >
+    <div id="canvas-holder" style="width:45%; display:inline-block;" >
      <canvas id="chart-area"></canvas>
    </div>
 
    <div   id = "table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">
     
-    <table id = "data_table" width = "100%" height = "250">
+    <table id = "data_table" width = "100%" height = "250" style="font-size: 10px;">
       <col width="0">
       <col width="200">
       <col width="0">
@@ -288,6 +474,17 @@
  <div>
 
  <div id = "stats_header">
+  <div class="dropdown" style="display: inline-block; cursor: pointer; width:200px">
+    <span class="dropdown-toggle" data-toggle="dropdown" id = "default_ranges" ><b>Default Ranges</b>
+  </span>
+    <ul class="dropdown-menu">
+      <li><a href="#" style="color: black;" id = "prev_week"> Prev. Week Stats</a></li>
+      <li><a href="#" id = "prev_month">Prev. Month Stats</a></li>
+      <li><a href="#" id = "three_month">Prev. 3 Months Stats</a></li>
+      <li><a href="#" id = "six_month">Prev. 6 Months Stats</a></li>
+    </ul>
+  </div>
+
     <span id = "month_header"> Month</span> <span id = "custom_range">Select Custom Range</span> 
   </div>
 
@@ -309,10 +506,12 @@
 
 
 
-<div id="bar-canvas-holder" style="width:75%; height:240px;margin-top:5%; position: relative;" >
+<div id="bar-canvas-holder" style="width:75%; height:240px;margin-top:5%; position: relative;cursor: pointer;" >
      <canvas id="bar-chart-area"></canvas>
 </div>
 </div>
+
+
 
 <span id = "dashboard" class = "badge " style="font-size: 20px">Dashboard</span>
 

@@ -287,6 +287,25 @@ function getKey(date){
 }
 
 
+function getPreviousWeekStats(){
+	var date2 = new Date();
+	var date1 = new Date();
+	date1.setDate(date2.getDate() - (date2.getDay()+7));
+	date2.setDate(date2.getDate() - date2.getDay());
+
+	console.log(date1+" "+date2);
+}
+
+function getPreviousMonthsstats(noOfMonths){
+	var date1 = new Date();
+	date1.setMonth(date1.getMonth() - noOfMonths);
+	date1.setDate(1);
+	var date2 = new Date();
+	date2.setDate(0);
+	console.log(date1+" "+date2);
+}
+
+
 function getStatsForSelectedMonth(){
 	var selectedMonthYear = document.getElementById("month");
 	var timeparts = selectedMonthYear.value.split("-");
@@ -498,7 +517,7 @@ function createRow(result, key, id){
 	var time = ""+getTimeSpend(result[key]);
 	var per = result[key] / totalTimeSpend * 100;
 	per = per.toFixed(2); 
-	labels.push(key + " " + per+"%");
+	
 	var timeParts = time.split(",");
 	var hours = "00";
 	var mins = "00";
@@ -507,13 +526,16 @@ function createRow(result, key, id){
 		hours = timeParts[0];
 		mins = timeParts[1];
 		secs = timeParts[2];
+		labels.push(key + " " + per+"% "+hour+"h "+mins+"m "+secs+"s");
 	}
 	else if(timeParts.length === 2){
 		mins = timeParts[0];
 		secs = timeParts[1];
+		labels.push(key + " " + per+"% "+mins+"m "+secs+"s");
 	}
 	else if(timeParts.length === 1){
 		secs = timeParts[0];
+		labels.push(key + " " + per+"% "+secs+"s");
 	}
 	if(secs.length == 1)
 		secs = "0"+secs;
@@ -535,8 +557,17 @@ function createRow(result, key, id){
 	s.style.backgroundColor=BGCOLOR[id];
 	var label = document.createElement('TD');
 	label.appendChild(s);
+
 	var domain = document.createElement('TD');
 	domain.textContent = key;
+
+	var empty1 = document.createElement('TD');
+	empty1.textContent = "sssssssss";
+	empty1.style.color="#fff";
+	var empty2 = document.createElement('TD');
+	empty2.textContent = "sss";
+	empty2.style.color="#fff";
+
 	var percentage = document.createElement('TD');
 	percentage.textContent = per;
 	var percentageMark = document.createElement('TD');
@@ -556,8 +587,10 @@ function createRow(result, key, id){
 
 	row.appendChild(label);
 	row.appendChild(domain);
+	row.appendChild(empty1);
 	row.appendChild(percentage);
 	row.appendChild(percentageMark);
+	row.appendChild(empty2);
 	row.appendChild(hour);
 	row.appendChild(hMark);
 	row.appendChild(min);
