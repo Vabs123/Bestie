@@ -233,6 +233,8 @@ window.onload = function(){
 	
 }
 
+
+
 function initiallize(){
 	document.getElementById("analysis_header").addEventListener("click", getTypeOfAnalysis);
 	document.getElementById("stats_header").addEventListener("click", getTypeOfStats);
@@ -243,6 +245,12 @@ function initiallize(){
 	document.getElementById("update_alert_time").addEventListener("click", changeAlertTime);
 	document.getElementById("site_used").addEventListener("click", removeSite);
 	document.getElementById("add_sitename").addEventListener("click", addSite);
+	document.getElementById("set_alert_time").addEventListener("click", updateAlertTime);
+
+
+
+
+	//document.getElementById("update_alert_time").addEventListener("click", updateAlertTime);
 	var x = document.querySelectorAll("#close");
 	for(var close of x)setCloseListener(close);
 
@@ -274,6 +282,10 @@ function initiallize(){
 	//showStats(curDate.getMonth(), null);
 	getPreviousWeekStats();
 }
+
+
+
+
 
 function setCloseListener(x){
 	x.addEventListener("click",close)
@@ -341,12 +353,48 @@ async function addSite(e) {
 }
 
 
-function changeAlertTime(e){
+function getAlertTime(resolve, reject){
     chrome.storage.sync.get(['notificationTime'], function (result) {
-
+		resolve(result['notificationTime']);
     });
 }
 
+function setAlertTime(hours, mins){
+	var time = hours+":"+mins;
+	chrome.storage.sync.set({notificationTime: time}, function(){
+		//show mark
+	});
+}
+
+function updateAlertTime(){
+    var hour = document.getElementById("hour_value").innerText;
+    var min = document.getElementById("min_value").innerText;
+    setAlertTime(hour, min);
+}
+
+
+
+async function changeAlertTime(e) {
+	var time = await new Promise(getAlertTime);
+	var timeParts = time.split(":");
+	var hours = timeParts[0];
+	var mins = timeParts[1];
+    document.getElementById("hover_notification_div").style.display = "block";
+    var hourSlider = document.getElementById("hour");
+    hourSlider.value = hours;
+    var minSlider = document.getElementById("min");
+    minSlider.value = mins;
+    var hourOutput = document.getElementById("hour_value");
+    var minOutput = document.getElementById("min_value");
+    hourOutput.innerHTML = hourSlider.value;
+    minOutput.innerHTML = minSlider.value;
+    hourSlider.oninput = function() {
+        hourOutput.innerHTML = this.value;
+    }
+    minSlider.oninput = function () {
+        minOutput.innerText = this.value;
+    }
+}
 
 
 

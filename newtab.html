@@ -30,6 +30,12 @@
 
 
  <style>
+
+html {
+  scroll-behavior: smooth;
+}
+
+
   canvas {
    -moz-user-select: none;
    -webkit-user-select: none;
@@ -276,12 +282,32 @@ cursor: pointer;
   top: 20%;
 }
 
+
+#hover_notification_div{
+    position: fixed;
+    display: none;
+    border-radius: 40px;
+    z-index: 1000;
+    width: 50%;
+    left: 25%;
+    font-size: 20px;
+    top: 20%;
+}
+
+
   #add_sitename{
       font-size: 16px;
       height: 32px;
       padding-bottom: 2%;
       padding-top: 0.7%;
   }
+#set_alert_time{
+     font-size: 16px;
+      height: 32px;
+      padding-bottom: 2%;
+      padding-top: 0.7%;
+}
+
 
   #site_nused button{
       font-size: 16px;
@@ -303,6 +329,69 @@ cursor: pointer;
 .well button{
   margin: 3.5%;
 }
+
+
+
+#canvas-holder:hover{
+  
+}
+
+
+
+
+
+
+
+
+.slidecontainer {
+    width: 100%;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 75%;
+    height: 10px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+input[type=range] {
+    display: inline-block;
+    width: 80%;
+    margin: 4%;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+
+
+
+
+
 
 
 
@@ -481,7 +570,7 @@ cursor: pointer;
 
   <div class = "container" id = "check">
     
-    <div id="canvas-holder" style="width:35%; display:inline-block; text-align: center;" >
+    <div id="canvas-holder" style="width:35%; display:inline-block; text-align: center;   " >
      <canvas id="chart-area"></canvas>
    </div>
 
@@ -498,13 +587,13 @@ cursor: pointer;
       <col width="0">
       <col width="0">
       <col width="0">
-      <thead style = "background-color: lightgrey; text-align: center; " id = "table_head">
-        <tr id = "table_head">
-          <td colspan="10" id = "table_head">
-            <span style="color: black">Today data</span>
-          </td>
-        </tr>
-      </thead>
+      <!--<thead style = "background-color: lightgrey; text-align: center; " id = "table_head">-->
+        <!--<tr id = "table_head">-->
+          <!--<td colspan="10" id = "table_head">-->
+            <!--<span style="color: black">Today data</span>-->
+          <!--</td>-->
+        <!--</tr>-->
+      <!--</thead>-->
     </table>
 
   </div>
@@ -584,7 +673,7 @@ cursor: pointer;
 </div>
 
 
-<div class="container shadow-lg p-3 mb-5 bg-white rounded" id = "hover_options"  style="display: block;">
+<div class="container shadow-lg p-3 mb-5 bg-white rounded" id = "hover_options"  style="display: none;">
   <span id = "close"><i class="fa fa-times fa-1x" aria-hidden="true"></i></span>
   <center><label>Add or Delete Social Sites</label></center>
   
@@ -608,6 +697,25 @@ cursor: pointer;
        <button  type="button" class="btn" style="color: black;">Basic</button>
   </div> -->
 </div>
+
+
+
+
+<div class="slidecontainer container shadow-lg p-3 mb-5 bg-white rounded" id = "hover_notification_div">
+   <span id = "close"><i class="fa fa-times fa-1x" aria-hidden="true"></i></span>
+  <center><label>Alert Time</label></center>
+  <center>   <small><span style="color: grey">(Below will be the total time you can spent on social sites in a day. Choose wisely ;)</span></small></center>
+  
+  <input type="range" min="0" max="23" value="1" class="slider" id = "hour">
+   <span id="hour_value"></span> hours
+   <input type="range" min="1" max="60" value="45" class="slider" id = "min">
+  <span id="min_value"></span> mins
+
+   <center><button id = "set_alert_time" type="submit" class="btn btn-default" >Update</button></center>
+</div>
+
+
+
 
 <div class="dropup" id = "options">
 

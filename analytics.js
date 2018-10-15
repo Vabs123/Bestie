@@ -23,36 +23,35 @@ window.onload = function(){
 //	chrome.storage.sync.set({"socialSites":socialSiteList}, function(){});
 
 	//document.body.style.backgroundImage = "url('img.jpg')";
-	chrome.storage.sync.get(['socialSites', 'notificationTime'],function(result){
-		console.log("Inside called  " + JSON.stringify(result));
-		if(result.socialSites != undefined)
-			socialSiteList = result.socialSites;
-
-		notificationTimeElement = document.getElementById("notification_time");
-		notificationTimeElement.defaultValue = "00:10";
-		if(result.notificationTime != undefined)
-			notificationTimeElement.value = result.notificationTime;
-		
-		
-		console.log(notificationTimeElement.value);
-
-		document.getElementById('setTime').addEventListener('click', setTime);
-
-		console.log("AFter make = "+JSON.stringify(socialSiteList));
+	//chrome.storage.sync.get(['socialSites', 'notificationTime'],function(result){
+	// 	console.log("Inside called  " + JSON.stringify(result));
+	// 	if(result.socialSites != undefined)
+	// 		socialSiteList = result.socialSites;
+	//
+	// 	notificationTimeElement = document.getElementById("notification_time");
+	// 	notificationTimeElement.defaultValue = "00:10";
+	// 	if(result.notificationTime != undefined)
+	// 		notificationTimeElement.value = result.notificationTime;
+	//
+	//
+	// 	console.log(notificationTimeElement.value);
+	//
+	// 	document.getElementById('setTime').addEventListener('click', setTime);
+	//
+	// 	console.log("AFter make = "+JSON.stringify(socialSiteList));
 		document.getElementById("home").style.backgroundImage =  "url('img.jpg')";
-		document.getElementById("add").addEventListener("click", handler.addSocialSite);
-		view.displaySocialSites();
-		startTime = document.getElementById("startTime");
-		startTime.defaultValue = "2018-09-27T00:00"; 
-		endTime = document.getElementById("endTime");
-		endTime.defaultValue = "2018-09-28T00:00"; 
-		document.getElementById("fetchResults").addEventListener("click", fetchResults);
-		showResults = document.getElementById("showresults");
-		showResults.style.display = "none";
-		results = document.getElementById("results");
-		view.setUpEventListeners();
+		// document.getElementById("add").addEventListener("click", handler.addSocialSite);
+		// view.displaySocialSites();
+		// startTime = document.getElementById("startTime");
+		// startTime.defaultValue = "2018-09-27T00:00";
+		// endTime = document.getElementById("endTime");
+		// endTime.defaultValue = "2018-09-28T00:00";
+		// document.getElementById("fetchResults").addEventListener("click", fetchResults);
+		// showResults = document.getElementById("showresults");
+		// showResults.style.display = "none";
+		// results = document.getElementById("results");
+		// view.setUpEventListeners();
 
-	});
 	// console.log("AFter make = "+JSON.stringify(socialSiteList));
 	// document.getElementById("home").style.backgroundImage =  "url('img.jpg')";
 	// document.getElementById("add").addEventListener("click", handler.addSocialSite());

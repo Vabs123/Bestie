@@ -155,9 +155,9 @@
     		</div>
     		<ul class="nav navbar-nav">
       			<li class="active"><a href="#home">Home</a></li>
-      			<li><a href="#add_social_sites">Add Social Sites</a></li>
-      			<li><a href="#notification">Set Notification Time</a></li>
-      			<li><a href="#analyse">Analyse</a></li>
+      			<!--<li><a href="#add_social_sites">Add Social Sites</a></li>-->
+      			<!--<li><a href="#notification">Set Notification Time</a></li>-->
+      			<!--<li><a href="#analyse">Analyse</a></li>-->
     		</ul>
   		</div>
   </nav>
@@ -197,199 +197,199 @@
 		</div>
 
 </div>
-<div class="jumbotron">
-<div id="add_social_sites" class="container-fluid">
-	<H3> Add below Social Sites that you want me to track for you:</H3>
-	<p>
-		<input type = "text" id = "social_site_name">
-			<button id = "add">Add</button>
-		<ul id = "social_site_list">
-		
-		</ul>
-	
-	</p>
+<!--<div class="jumbotron">-->
+<!--<div id="add_social_sites" class="container-fluid">-->
+	<!--<H3> Add below Social Sites that you want me to track for you:</H3>-->
+	<!--<p>-->
+		<!--<input type = "text" id = "social_site_name">-->
+			<!--<button id = "add">Add</button>-->
+		<!--<ul id = "social_site_list">-->
+		<!---->
+		<!--</ul>-->
+	<!---->
+	<!--</p>-->
 
-</div>
-</div>
-<div id = "notification" class = "container-fluid">
-	<H3>Set time after which I should alert you to stop social networking</H3>
-		<input type = "time" id = "notification_time">
-		<button id = "setTime">Set</button>
-</div>
-
-
+<!--</div>-->
+<!--</div>-->
+<!--<div id = "notification" class = "container-fluid">-->
+	<!--<H3>Set time after which I should alert you to stop social networking</H3>-->
+		<!--<input type = "time" id = "notification_time">-->
+		<!--<button id = "setTime">Set</button>-->
+<!--</div>-->
 
 
 
 
-	
-		<div style="display:block">
-		 <input TYPE = "datetime-local" id = "startTime">
-		
-		</BR>
-		</BR>
-		 To
-		</BR>
-		</BR>
-		 <input TYPE = "datetime-local" id = "endTime">
-		 </BR>
-		</BR>
-		  <input type="submit" value="Analyse" id = "fetchResults">
-		 </div>
-		  </BR>
-		 </BR>
-		 </BR>
-		 <div id = "showresults">
-		 	<H2> Below are the your Social Media Usage:</H4>
-		 </BR>
-		 </BR>
-		 </BR>
-		 <div id = "results">
-
-		 	<table class="table table-striped">
-    			<thead>
-      				<tr>
-        				<th>Date</th>
-        				<th>Social Site</th>
-        				<th>Hours</th>
-        				<th>Minutes</th>
-        				<th>Seconds</th>
-      				</tr>
-    			</thead>
-   				 <tbody id = "table_body">
-      			
-    			</tbody>
-  			</table>
 
 
-		 </div>
-		</div>
-<div class = "analysis_type">
-  <div >
+	<!---->
+		<!--<div style="display:block">-->
+		 <!--<input TYPE = "datetime-local" id = "startTime">-->
+		<!---->
+		<!--</BR>-->
+		<!--</BR>-->
+		 <!--To-->
+		<!--</BR>-->
+		<!--</BR>-->
+		 <!--<input TYPE = "datetime-local" id = "endTime">-->
+		 <!--</BR>-->
+		<!--</BR>-->
+		  <!--<input type="submit" value="Analyse" id = "fetchResults">-->
+		 <!--</div>-->
+		  <!--</BR>-->
+		 <!--</BR>-->
+		 <!--</BR>-->
+		 <!--<div id = "showresults">-->
+		 	<!--<H2> Below are the your Social Media Usage:</H4>-->
+		 <!--</BR>-->
+		 <!--</BR>-->
+		 <!--</BR>-->
+		 <!--<div id = "results">-->
 
- </div>
- <span id = "today"> Today</span> <span id = "select_day">Select Day</span> <span id = "all_time">All Time</span> <span id = "custom_range">Custom Range Average</span>
-
-<div id = "set_date_query">
-</div>
-<!--- Here The piechart code comes
--->
- <div id = "today_chart" class = "container">
-		    <div id="today_canvas-holder" style="width:35%; display:inline-block;" >
-		       <canvas id="today_chart-area"></canvas>
-	     </div>
-    <div   id = "today_table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">
-	     <table id = "today_data_table" width = "100%" height = "250">
-          <col width="0">
-          <col width="200">
-          <col width="0">
-          <col width="0">
-          <col width="0">
-	        <col width="0">
-          <col width="0">
-          <col width="0">
-	        <col width="0">
-          <col width="0">
-          <thead style = "background-color: lightgrey; text-align: center; " id = "table_head">
-            <tr id = "table_head">
-              <td colspan="10" id = "table_head">
-                <span style="color: black">Today data</span>
-              </td>
-            </tr>
-          </thead>
-       </table>
-
-	 </div>
-  </div>
-
-  <div id = "select_day_chart" class = "container">
-		    <div id="select_canvas-holder" style="width:35%; display:inline-block;" >
-		       <canvas id="select_chart-area"></canvas>
-	     </div>
-    <div   id = "select_table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">
-	     <table id = "select_data_table" width = "100%" height = "250">
-          <col width="0">
-          <col width="200">
-          <col width="0">
-          <col width="0">
-          <col width="0">
-	        <col width="0">
-          <col width="0">
-          <col width="0">
-	        <col width="0">
-          <col width="0">
-          <thead style = "background-color: lightgrey; text-align: center; " id = "table_head">
-            <tr id = "table_head">
-              <td colspan="10" id = "table_head">
-                <span style="color: black">Select day data</span>
-              </td>
-            </tr>
-          </thead>
-       </table>
-
-	 </div>
-  </div>
+		 	<!--<table class="table table-striped">-->
+    			<!--<thead>-->
+      				<!--<tr>-->
+        				<!--<th>Date</th>-->
+        				<!--<th>Social Site</th>-->
+        				<!--<th>Hours</th>-->
+        				<!--<th>Minutes</th>-->
+        				<!--<th>Seconds</th>-->
+      				<!--</tr>-->
+    			<!--</thead>-->
+   				 <!--<tbody id = "table_body">-->
+      			<!---->
+    			<!--</tbody>-->
+  			<!--</table>-->
 
 
+		 <!--</div>-->
+		<!--</div>-->
+<!--<div class = "analysis_type">-->
+  <!--<div >-->
 
+ <!--</div>-->
+ <!--<span id = "today"> Today</span> <span id = "select_day">Select Day</span> <span id = "all_time">All Time</span> <span id = "custom_range">Custom Range Average</span>-->
 
-<div id = "custom_range_chart" class = "container">
-		    <div id="custom_range_canvas-holder" style="width:35%; display:inline-block;" >
-		       <canvas id="custom_range_chart-area"></canvas>
-	     </div>
-    <div   id = "custom_range_table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">
-	     <table id = "custom_range_data_table" width = "100%" height = "250">
-          <col width="0">
-          <col width="200">
-          <col width="0">
-          <col width="0">
-          <col width="0">
-	        <col width="0">
-          <col width="0">
-          <col width="0">
-	        <col width="0">
-          <col width="0">
-          <thead style = "background-color: lightgrey; text-align: center; " id = "table_head">
-            <tr id = "table_head">
-              <td colspan="10" id = "table_head">
-                <span style="color: black">Custom Range data</span>
-              </td>
-            </tr>
-          </thead>
-       </table>
+<!--<div id = "set_date_query">-->
+<!--</div>-->
+<!--&lt;!&ndash;- Here The piechart code comes-->
+<!--&ndash;&gt;-->
+ <!--<div id = "today_chart" class = "container">-->
+		    <!--<div id="today_canvas-holder" style="width:35%; display:inline-block;" >-->
+		       <!--<canvas id="today_chart-area"></canvas>-->
+	     <!--</div>-->
+    <!--<div   id = "today_table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">-->
+	     <!--<table id = "today_data_table" width = "100%" height = "250">-->
+          <!--<col width="0">-->
+          <!--<col width="200">-->
+          <!--<col width="0">-->
+          <!--<col width="0">-->
+          <!--<col width="0">-->
+	        <!--<col width="0">-->
+          <!--<col width="0">-->
+          <!--<col width="0">-->
+	        <!--<col width="0">-->
+          <!--<col width="0">-->
+          <!--<thead style = "background-color: lightgrey; text-align: center; " id = "table_head">-->
+            <!--<tr id = "table_head">-->
+              <!--<td colspan="10" id = "table_head">-->
+                <!--<span style="color: black">Today data</span>-->
+              <!--</td>-->
+            <!--</tr>-->
+          <!--</thead>-->
+       <!--</table>-->
 
-	 </div>
-  </div>
+	 <!--</div>-->
+  <!--</div>-->
+
+  <!--<div id = "select_day_chart" class = "container">-->
+		    <!--<div id="select_canvas-holder" style="width:35%; display:inline-block;" >-->
+		       <!--<canvas id="select_chart-area"></canvas>-->
+	     <!--</div>-->
+    <!--<div   id = "select_table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">-->
+	     <!--<table id = "select_data_table" width = "100%" height = "250">-->
+          <!--<col width="0">-->
+          <!--<col width="200">-->
+          <!--<col width="0">-->
+          <!--<col width="0">-->
+          <!--<col width="0">-->
+	        <!--<col width="0">-->
+          <!--<col width="0">-->
+          <!--<col width="0">-->
+	        <!--<col width="0">-->
+          <!--<col width="0">-->
+          <!--<thead style = "background-color: lightgrey; text-align: center; " id = "table_head">-->
+            <!--<tr id = "table_head">-->
+              <!--<td colspan="10" id = "table_head">-->
+                <!--<span style="color: black">Select day data</span>-->
+              <!--</td>-->
+            <!--</tr>-->
+          <!--</thead>-->
+       <!--</table>-->
+
+	 <!--</div>-->
+  <!--</div>-->
 
 
 
-<div id = "all_time_chart" class = "container">
-		    <div id="all_time_canvas-holder" style="width:35%; display:inline-block;" >
-		       <canvas id="all_time_chart-area"></canvas>
-	     </div>
-    <div   id = "all_time_table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">
-	     <table id = "all_time_data_table" width = "100%" height = "250">
-          <col width="0">
-          <col width="200">
-          <col width="0">
-          <col width="0">
-          <col width="0">
-	        <col width="0">
-          <col width="0">
-          <col width="0">
-	        <col width="0">
-          <col width="0">
-          <thead style = "background-color: lightgrey; text-align: center; " id = "table_head">
-            <tr id = "table_head">
-              <td colspan="10" id = "table_head">
-                <span style="color: black">All time data</span>
-              </td>
-            </tr>
-          </thead>
-       </table>
 
-	 </div>
-  </div>
+<!--<div id = "custom_range_chart" class = "container">-->
+		    <!--<div id="custom_range_canvas-holder" style="width:35%; display:inline-block;" >-->
+		       <!--<canvas id="custom_range_chart-area"></canvas>-->
+	     <!--</div>-->
+    <!--<div   id = "custom_range_table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">-->
+	     <!--<table id = "custom_range_data_table" width = "100%" height = "250">-->
+          <!--<col width="0">-->
+          <!--<col width="200">-->
+          <!--<col width="0">-->
+          <!--<col width="0">-->
+          <!--<col width="0">-->
+	        <!--<col width="0">-->
+          <!--<col width="0">-->
+          <!--<col width="0">-->
+	        <!--<col width="0">-->
+          <!--<col width="0">-->
+          <!--<thead style = "background-color: lightgrey; text-align: center; " id = "table_head">-->
+            <!--<tr id = "table_head">-->
+              <!--<td colspan="10" id = "table_head">-->
+                <!--<span style="color: black">Custom Range data</span>-->
+              <!--</td>-->
+            <!--</tr>-->
+          <!--</thead>-->
+       <!--</table>-->
+
+	 <!--</div>-->
+  <!--</div>-->
+
+
+
+<!--<div id = "all_time_chart" class = "container">-->
+		    <!--<div id="all_time_canvas-holder" style="width:35%; display:inline-block;" >-->
+		       <!--<canvas id="all_time_chart-area"></canvas>-->
+	     <!--</div>-->
+    <!--<div   id = "all_time_table" style=" display:inline-block;" class = "shadow-lg p-3 mb-5 bg-white rounded">-->
+	     <!--<table id = "all_time_data_table" width = "100%" height = "250">-->
+          <!--<col width="0">-->
+          <!--<col width="200">-->
+          <!--<col width="0">-->
+          <!--<col width="0">-->
+          <!--<col width="0">-->
+	        <!--<col width="0">-->
+          <!--<col width="0">-->
+          <!--<col width="0">-->
+	        <!--<col width="0">-->
+          <!--<col width="0">-->
+          <!--<thead style = "background-color: lightgrey; text-align: center; " id = "table_head">-->
+            <!--<tr id = "table_head">-->
+              <!--<td colspan="10" id = "table_head">-->
+                <!--<span style="color: black">All time data</span>-->
+              <!--</td>-->
+            <!--</tr>-->
+          <!--</thead>-->
+       <!--</table>-->
+
+	 <!--</div>-->
+  <!--</div>-->
 
 
 
