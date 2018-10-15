@@ -246,7 +246,7 @@ function initiallize(){
 	document.getElementById("site_used").addEventListener("click", removeSite);
 	document.getElementById("add_sitename").addEventListener("click", addSite);
 	document.getElementById("set_alert_time").addEventListener("click", updateAlertTime);
-
+	document.getElementById("cover").addEventListener("click", hideHoveringDiv);
 
 
 
@@ -288,11 +288,17 @@ function initiallize(){
 
 
 function setCloseListener(x){
-	x.addEventListener("click",close)
+	x.addEventListener("click",close);
 }
 
 function close(e){
 	e.path[2].style.display = "none";
+}
+
+function hideHoveringDiv(e){
+    document.getElementById("hover_options").style.display = "none";
+    document.getElementById("hover_notification_div").style.display = "none";
+    document.getElementById("cover").style.display = "none";
 }
 
 async function showSocialSitesDiv(e) {
@@ -302,6 +308,7 @@ async function showSocialSitesDiv(e) {
 
 function showSites(socialSites) {
 	document.getElementById("hover_options").style.display = "block";
+    document.getElementById("cover").style.display = "block";
 	var well = document.getElementById('site_used');
 	well.innerHTML = "";
 	var i = 0;
@@ -380,6 +387,7 @@ async function changeAlertTime(e) {
 	var hours = timeParts[0];
 	var mins = timeParts[1];
     document.getElementById("hover_notification_div").style.display = "block";
+    document.getElementById("cover").style.display = "block";
     var hourSlider = document.getElementById("hour");
     hourSlider.value = hours;
     var minSlider = document.getElementById("min");
