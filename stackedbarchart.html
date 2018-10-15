@@ -11,30 +11,114 @@
   </body>
 
   <script>
-  	var ctx = document.getElementById('chart');
 
-  	var myChart = new Chart(ctx, {
-  		type: 'horizontalBar',
-  		data: {
-  			labels: ['B', 'A'],
-  			datasets: [
-  			{
-  				label: 'Low',
-  				data: [67.8, 12],
-  				backgroundColor: ['#D6E9C6',"black"]
-  			}
-  			]
-  		},
-  		options: {
-  			scales: {
-  				xAxes: [{
-          ticks:{
-            beginAtZero: true
-          } 
-           }],
-  				yAxes: [{ stacked: true }]
-  			}
-  		}
-  	});
+
+function getTimeSpend(time){
+  time = (+time) / 1000;
+  time = (~~time);
+  if(time < 60)
+    return time;
+  var sec = time % 60;
+  time /= 60;
+  time = (~~time);
+  if(time < 60)
+    return time+","+sec;
+  var min = time % 60;
+  time /= 60;
+  time = (~~time);
+  return ""+time+","+min+","+sec;
+}
+
+function getTimeString(timeParts){
+  var formattedTime = "";
+  var time = timeParts.split(",");
+  if(time.length === 3){
+    formattedTime = time[0]+"h"+time[1]+"m"+time[2]+"s";
+  }
+  else if(time.length === 2){
+    formattedTime = time[0]+"m"+time[1]+"s";  
+  }
+  else if(time.length === 1){
+    formattedTime = time[0]+"s";
+  }
+  return formattedTime;
+}
+
+Chart.plugins.register({
+  afterDraw: function(chartInstance) {
+    if (chartInstance.config.options.showDatapoints) {
+      var helpers = Chart.helpers;
+      var ctx = chartInstance.chart.ctx;
+      var fontColor = helpers.getValueOrDefault(chartInstance.config.options.showDatapoints.fontColor, chartInstance.config.options.defaultFontColor);
+
+      // render the value of the chart above the bar
+      ctx.font = Chart.helpers.fontString("10", 'normal', Chart.defaults.global.defaultFontFamily);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillStyle = fontColor;
+
+      chartInstance.data.datasets.forEach(function (dataset) {
+        for (var i = 0; i < dataset.data.length; i++) {
+          var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+          var scaleMax = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._yScale.maxHeight;
+          var yPos = (scaleMax - model.y) / scaleMax >= 0.93 ? model.y + 20 : model.y - 5;
+          console.log(model.x);
+          ctx.fillText(dataset.data[i], model.x, yPos);
+        }
+      });
+    }
+  }
+});
+
+  	var ctx = document.getElementById("chart");
+
+var data = {
+  labels: ["2 Jan", "9 Jan", "16 Jan", "23 Jan", "30 Jan", "6 Feb", "13 Feb"],
+  datasets: [{
+    data: [150232321, 87121211, 5612121, 5012121, 883423, 601224, 45131421],
+    backgroundColor: "#4082c4"
+  }]
+}
+
+
+
+var myChart = new Chart(ctx, {
+  type: 'bar',
+  data: data,
+  options: {
+    showDatapoints: true,
+    "hover": {
+      "animationDuration": 0
+    },
+    
+    legend: {
+      "display": false
+    },
+    tooltips: {
+      "enabled": false
+    },
+    scales: {
+      yAxes: [{
+        display: false,
+        gridLines: {
+          display: false
+        },
+        ticks: {
+          max: Math.max(...data.datasets[0].data) + 10,
+          display: false,
+          beginAtZero: true
+        }
+      }],
+      xAxes: [{
+        gridLines: {
+          display: false
+        },
+        ticks: {
+          beginAtZero: true
+        }
+      }]
+    }
+  }
+});
 </script>
 </html>

@@ -21,6 +21,11 @@ var active = null;
 var setOfKeys = new Set(['socialSites', 'notificationTime']);
 var activeAnalysisHeader = null;
 var activeStatsHeader = null;
+var barMaxSiteTimeFind = {};
+var barTotalTime = 0;
+var activeDeafultStats = null;
+
+
 
 Chart.pluginService.register({
 	beforeDraw: function (chart) {
@@ -87,7 +92,7 @@ var config = {
 				]
 			},
 			options: {
-				//onHover: abc,
+				
 				responsive: true,
 				legend: {
 					display: false
@@ -119,21 +124,66 @@ var config = {
 			}
 		};
 
+
+
+Chart.plugins.register({
+  afterDraw: function(chartInstance) {
+    if (chartInstance.config.options.showDatapoints) {
+      var helpers = Chart.helpers;
+      var ctx = chartInstance.chart.ctx;
+      var fontColor = helpers.getValueOrDefault(chartInstance.config.options.showDatapoints.fontColor, chartInstance.config.options.defaultFontColor);
+
+      // render the value of the chart above the bar
+      ctx.font = Chart.helpers.fontString("20", 'normal', Chart.defaults.global.defaultFontFamily);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillStyle = "black";
+
+      chartInstance.data.datasets.forEach(function (dataset) {
+        for (var i = 0; i < dataset.data.length; i++) {
+          var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model;
+          var scaleMax = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._xScale.maxHeight;
+          //console.log(model.x);
+          var xPos = (scaleMax - model.x) / scaleMax >= -4.5 ? model.x + 40 : model.x - 5;
+          ctx.fillText(getTimeString(""+getTimeSpend(dataset.data[i])), xPos, model.y + 12);
+        }
+      });
+    }
+  }
+});
+
 		var barConfig = {
 			type: 'horizontalBar',
+			ticks:{
+				display:false
+			},
 			data: {
-				labels:['1'],
+				labels:['Time'],
 				datasets:[{
-					label:'No Data',
+					label:'Time',
 					data:[1]
 				}
 				]
 			},
 			options: {
+				showDatapoints: true,
+				hover:{
+					onHover:showBarDivResult
+				},
 				responsive: true,
+				intersect: true,
 				maintainAspectRatio:false,
+				legend: {
+					display: false
+				},
 				scales: {
-					xAxes: [{ stacked: true }],
+					xAxes: [{
+						stacked:true,
+						ticks:{
+							beginAtZero: true,
+							display:false
+						} 
+					}],
 					yAxes: [{ stacked: true }]
 				}
 			}
@@ -157,6 +207,20 @@ function getTimeSpend(time){
 	return ""+time+","+min+","+sec;
 }
 
+function getTimeString(timeParts){
+	var formattedTime = "";
+	var time = timeParts.split(",");
+	if(time.length === 3){
+		formattedTime = time[0]+"h"+time[1]+"m"+time[2]+"s";
+	}
+	else if(time.length === 2){
+		formattedTime = time[0]+"m"+time[1]+"s";	
+	}
+	else if(time.length === 1){
+		formattedTime = time[0]+"s";
+	}
+	return formattedTime;
+}
 
 
 window.onload = function(){
@@ -175,6 +239,12 @@ function initiallize(){
 	document.getElementById("select_date").addEventListener("click", getAnalysisForSelectedDay);
 	document.getElementById("select_month").addEventListener("click", getStatsForSelectedMonth);
 	document.getElementById("select_range").addEventListener("click", getStatsForSelectedRange);
+	document.getElementById("update_sites").addEventListener("click", showSocialSitesDiv);
+	document.getElementById("update_alert_time").addEventListener("click", changeAlertTime);
+	document.getElementById("site_used").addEventListener("click", removeSite);
+	document.getElementById("add_sitename").addEventListener("click", addSite);
+	var x = document.querySelectorAll("#close");
+	for(var close of x)setCloseListener(close);
 
 	activeAnalysisHeader = document.getElementById("today");
 	canvas = document.getElementById("chart-area");
@@ -191,15 +261,124 @@ function initiallize(){
 
 
 
-	activeStatsHeader = document.getElementById("month_header");
+	activeStatsHeader = document.getElementById("default_ranges");
+	document.getElementById("default_list").addEventListener("click",getDefaultRangeOption);
+	activeDeafultStats = document.getElementById("prev_week");
 
-
-	document.getElementById("dashboard").addEventListener("click", showAnalytics);
+		document.getElementById("about_us").addEventListener("click", aboutUs);
 	setListenersToTable();
+	//setBarChartListeners();
 	var curDate = new Date();
 	showChart(curDate);
 	setDoughnutListeners();
-	showStats(curDate.getMonth(), null);
+	//showStats(curDate.getMonth(), null);
+	getPreviousWeekStats();
+}
+
+function setCloseListener(x){
+	x.addEventListener("click",close)
+}
+
+function close(e){
+	e.path[2].style.display = "none";
+}
+
+async function showSocialSitesDiv(e) {
+	var socialSites = await new Promise(fetchSocialSites);
+	showSites(socialSites);
+}
+
+function showSites(socialSites) {
+	document.getElementById("hover_options").style.display = "block";
+	var well = document.getElementById('site_used');
+	well.innerHTML = "";
+	var i = 0;
+	for(var site of socialSites){
+		var button = document.createElement('button');
+		button.className = 'btn';
+		button.textContent=site;
+		button.id = i++;
+		well.appendChild(button);
+	}
+}
+
+function updateSocialSites(socialSiteList){
+	chrome.storage.sync.set({socialSites:socialSiteList}, function(){
+        var curDate = new Date();
+       
+        showChart(curDate);
+        activeAnalysisHeader.style.color = "grey";
+        activeAnalysisHeader =  document.getElementById("today");
+        activeAnalysisHeader.style.color = "black";
+        getPreviousWeekStats();
+	});
+
+}
+
+function fetchSocialSites(resolve, reject){
+    chrome.storage.sync.get(['socialSites'], function (result) {
+    		resolve( result['socialSites']);
+    });
+}
+
+async function removeSite(e){
+	if(e.target.className === "btn"){
+        var socialSites = await new Promise(fetchSocialSites);
+		socialSites.splice(e.target.id, 1);
+        showSites(socialSites);
+		updateSocialSites(socialSites);
+	}
+}
+
+async function addSite(e) {
+	var siteInput = document.getElementById("social_site_name");
+	var site = siteInput.value;
+	siteInput.value = "";
+	var socialSites = await new Promise(fetchSocialSites);
+	socialSites.push(site);
+	showSites(socialSites);
+	updateSocialSites(socialSites);
+}
+
+
+function changeAlertTime(e){
+    chrome.storage.sync.get(['notificationTime'], function (result) {
+
+    });
+}
+
+
+
+
+function getDefaultRangeOption(e){
+    barMaxSiteTimeFind = {};
+	if(e.target.id === "prev_week"){
+		activeDeafultStats.style.color = "grey";
+		activeDeafultStats = e.target;
+		activeDeafultStats.style.color = "black";
+		getPreviousWeekStats();
+	}
+	else if(e.target.id === "prev_month"){
+		activeDeafultStats.style.color = "grey";
+		activeDeafultStats = e.target;
+		activeDeafultStats.style.color = "black";
+		getPreviousMonthsStats(1);
+	}
+	else if(e.target.id === "three_month"){
+		activeDeafultStats.style.color = "grey";
+		activeDeafultStats = e.target;
+		activeDeafultStats.style.color = "black";
+		getPreviousMonthsStats(3);
+	}
+	else if(e.target.id === "six_month"){
+		activeDeafultStats.style.color = "grey";
+		activeDeafultStats = e.target;
+		activeDeafultStats.style.color = "black";
+		getPreviousMonthsStats(6);
+	}
+
+
+
 }
 
 function getTypeOfStats(e){
@@ -229,6 +408,7 @@ function showStats(date1, date2){
 
 //2018912
 function fetchStatsData(date1, date2){
+	var dateTemp = new Date(date1);
 	var barDataset = {
 		totalTime:[]
 	}
@@ -259,12 +439,180 @@ function fetchStatsData(date1, date2){
 			labelsOfBarChart.push(d.toDateString());
 			d.setDate(d.getDate() + 1);
 		}
-		showBarChart(barDataset, labelsOfBarChart);
+		//showBarChartStacked(barDataset, labelsOfBarChart); Call when stacked
+		showBarChartUnstacked(barDataset, dateTemp);
+
 	});
 } 
 
+
+// function setBarChartListeners(){
+// 	var barChartDiv = document.getElementById("barChart_result");
+// 	barCanvas.onmousemove =function(e){
+		
+		
+// 	var activePoints = barAnalysis.getElementsAtEvent(e);
+// 	if (activePoints[0]) {
+// 				barChartDiv.style.visibility = "visible";
+// 			//	console.log(JSON.stringify(activePoints[0]));
+//         		var chartData = activePoints[0]['_chart'].config.data;
+//         		console.log(chartData);
+//         		var idx = activePoints[0]['_index'];
+
+//         		var label = chartData.labels[idx];
+//         		var value = chartData.datasets[0].data[idx];
+//         		document.getElementById("site_name").textContent = label;
+//         		var per = (+value) / barTotalTime * 100;
+//         		per = per.toFixed(2); 
+//         		document.getElementById("percentage").textContent = per+"%";
+//         		document.getElementById("time_spend").textContent = getTimeString(""+getTimeSpend(+value));
+//         		document.getElementById("most_active_site_day").textContent = barMaxSiteTimeFind[label][2]+"  (Time Spent - "+getTimeString(""+getTimeSpend(barMaxSiteTimeFind[label][0]))+")";
+//         		document.getElementById("most_inactive_site_day").textContent = barMaxSiteTimeFind[label][3]+"  (Time Spent - "+getTimeString(""+getTimeSpend(barMaxSiteTimeFind[label][1]))+")";
+//         		//todayAnalysis.options.elements.center.color = chartData.datasets[0].backgroundColor[idx];
+        		
+//       		}
+// };
+
+
+// barCanvas.onmouseout =function(e){
+// 	barChartDiv.style.visibility = "hidden";
+ 	
+      		
+// };
+// }
+
+
+
+function showBarDivResult(e, t){
+	//console.log("hello");
+	 var barChartDiv = document.getElementById("barChart_result");
+	// var activePoints = barAnalysis.getElementsAtEvent(e);
+	console.log(e);
+	console.log(e.length);
+	if (e[0]) {
+		//alert("hello");
+		barChartDiv.style.visibility = "visible";
+			//	console.log(JSON.stringify(activePoints[0]));
+			var chartData = e[0]['_chart'].config.data;
+			console.log(chartData);
+			var idx = e[0]['_index'];
+
+			var label = chartData.labels[idx];
+			var value = chartData.datasets[0].data[idx];
+			document.getElementById("site_name").textContent = label;
+			var per = (+value) / barTotalTime * 100;
+			per = per.toFixed(2); 
+			document.getElementById("percentage").textContent = per+"%";
+			document.getElementById("time_spend").textContent = getTimeString(""+getTimeSpend(+value));
+			document.getElementById("most_active_site_day").textContent = barMaxSiteTimeFind[label][2]+"  (Time Spent - "+getTimeString(""+getTimeSpend(barMaxSiteTimeFind[label][0]))+")";
+			document.getElementById("most_inactive_site_day").textContent = barMaxSiteTimeFind[label][3]+"  (Time Spent - "+getTimeString(""+getTimeSpend(barMaxSiteTimeFind[label][1]))+")";
+        		//todayAnalysis.options.elements.center.color = chartData.datasets[0].backgroundColor[idx];
+        		
+        	}
+        	else{
+        		barChartDiv.style.visibility = "hidden";
+
+        	}
+        }
+
+
+
+function checkMaxSite(barDataset, site, time, date, i){
+	if(!barMaxSiteTimeFind.hasOwnProperty(site)){
+		barMaxSiteTimeFind[site] = [0,Infinity,"d1","d2"];
+	}
+	if(time > barMaxSiteTimeFind[site][0]){
+		barMaxSiteTimeFind[site][0] = time;
+		var tDay = new Date(date);
+		tDay.setDate(date.getDate() + i);
+		barMaxSiteTimeFind[site][2] = tDay.toDateString();
+	}
+	if(time < barMaxSiteTimeFind[site][1]){
+		barMaxSiteTimeFind[site][1] = time;
+		var tDay = new Date(date);
+		tDay.setDate(date.getDate() + i);
+		barMaxSiteTimeFind[site][3] = tDay.toDateString();
+	}
+
+}
+
+
+function showBarChartUnstacked(barDataset, date1 ){
+	barAnalysis.options.scales.xAxes[0].stacked = false;
+    barAnalysis.update();
+    barAnalysis.render();
+	var sumBarDataset = {};
+	var totalTime = 0;
+	var d = [];
+	var labels = [];
+	var i = 0;
+	var mostActiveDay = 0;
+	var mostInactiveDay = 0;
+	var maxUsedSite = 0;
+	var maxSiteName = "";
+
+	//barMaxSiteTimeFind
+	//var mostActiveDayOnSite
+	bColor = [];
+	for(var site in barDataset){
+		d[i] = 0;
+		if(site != "totalTime"){
+			labels.push(site);
+			bColor.push(BGCOLOR[i]);
+		}
+		else
+			i--;
+		var k = 0;
+		var j = 0;
+		for(var e of barDataset[site]){
+			if(site === "totalTime"){
+				totalTime += (+e);
+				if(e >  barDataset["totalTime"][mostActiveDay])
+					mostActiveDay = k;
+				if(e < barDataset[site][mostInactiveDay])
+					mostInactiveDay = k;
+				k++;
+			}
+			else{
+				checkMaxSite(barDataset, site, e, date1, j++);
+				d[i] += (+e); 
+			}
+		}
+		if(d[i] > maxUsedSite){
+			maxUsedSite = d[i];
+			maxSiteName = site;
+		}
+		i++;
+	}
+	barData.datasets[0].data = d;
+	barTotalTime = totalTime;
+	barData.labels = labels;
+	barData.datasets[0].backgroundColor = bColor;
+	barAnalysis.update();
+	barAnalysis.render();
+	
+
+	var mat = getTimeString(""+getTimeSpend(barDataset["totalTime"][mostActiveDay]));
+	var mit = getTimeString(""+getTimeSpend(barDataset["totalTime"][mostInactiveDay]));
+	var timeParts = mat.split(",");
+
+	var tDay = new Date(date1);
+	tDay.setDate(date1.getDate() + mostActiveDay);
+	document.getElementById("most_active_day").textContent = tDay.toDateString()+"  (Time Spent - "+mat+")";
+
+	
+	var tDay2 = new Date(date1);
+	tDay2.setDate(date1.getDate() + mostInactiveDay);
+	document.getElementById("most_inactive_day").textContent = tDay2.toDateString()+"  (Time Spent - "+mit+" )";
+
+	document.getElementById("most_used_site").textContent = maxSiteName+"  (Time Spent - "+getTimeString(""+getTimeSpend(maxUsedSite))+" )";
+	document.getElementById("total_time_spend").textContent = getTimeString(""+getTimeSpend(totalTime));
+	//var
+}
+
+
 //todayData.datasets[0].data = data;
-function showBarChart(barDataset, labelsOfBarChart){
+function showBarChartStacked(barDataset, labelsOfBarChart){
 	var dataOfBarChart = [];
 	var i = 0;
 	for(var key in barDataset)
@@ -278,6 +626,8 @@ function showBarChart(barDataset, labelsOfBarChart){
 	barAnalysis.update();
 
 	barAnalysis.render();
+
+
 }
 
 function getKey(date){
@@ -291,18 +641,28 @@ function getPreviousWeekStats(){
 	var date2 = new Date();
 	var date1 = new Date();
 	date1.setDate(date2.getDate() - (date2.getDay()+7));
-	date2.setDate(date2.getDate() - date2.getDay());
+	date2.setDate(date2.getDate() - date2.getDay() - 1);
 
 	console.log(date1+" "+date2);
+	fetchStatsData(date1, date2);
+	var time = document.getElementById("time_range");
+	var timeSite = document.getElementById("time_range_site");
+	time.textContent = date1.toDateString() + " - "+ date2.toDateString();
+	timeSite.textContent = date1.toDateString() + " - "+ date2.toDateString();
 }
 
-function getPreviousMonthsstats(noOfMonths){
+function getPreviousMonthsStats(noOfMonths){
 	var date1 = new Date();
 	date1.setMonth(date1.getMonth() - noOfMonths);
 	date1.setDate(1);
 	var date2 = new Date();
 	date2.setDate(0);
 	console.log(date1+" "+date2);
+	fetchStatsData(date1, date2);
+	var time = document.getElementById("time_range");
+	var timeSite = document.getElementById("time_range_site");
+	time.textContent = date1.toDateString() + " - "+ date2.toDateString();
+	timeSite.textContent = date1.toDateString() + " - "+ date2.toDateString();
 }
 
 
@@ -329,11 +689,12 @@ function getAnalysisForSelectedDay(){
 
 function getTypeOfAnalysis(e){
 	//alert(e.target.id);
-	if(e.target.id != "analysis_header"){
+	if(e.target.id != "analysis_header" && e.target.id != "stats"){
 		var datePickerDiv = document.getElementById("datepick");
 		datePickerDiv.style.visibility="hidden";
 		activeAnalysisHeader.style.color = "grey";
 		activeAnalysisHeader = e.target;
+
 	}
 	if(activeAnalysisHeader.id === "today"){
 		activeAnalysisHeader.style.color = "black";
@@ -352,8 +713,8 @@ function getTypeOfAnalysis(e){
 		activeAnalysisHeader.style.color = "black";
 		showChart(null);
 	}
-	else if(activeAnalysisHeader.id === "stats"){
-		activeAnalysisHeader.style.color = "black";
+	if(e.target.id === "stats"){
+		document.getElementById("statistics").style.display = "block";
 	}
 
 
@@ -361,7 +722,8 @@ function getTypeOfAnalysis(e){
 
 
 
-function showChart(date){
+async function showChart(date){
+	var socialSites = await new Promise(fetchSocialSites);
 	data = [];
 	totalTimeSpend = 0;
 	bColor = [];
@@ -378,6 +740,8 @@ function showChart(date){
 			var summary = result[key]["summary"];
 			var i = 0;
 			for(var site in summary){
+				if(!socialSites.includes(site))
+					continue;
 				data.push(((+summary[site])));
 				totalTimeSpend += (+summary[site]);
 				console.log("Total Time Spend Today = " + totalTimeSpend);
@@ -399,6 +763,8 @@ function showChart(date){
 					continue;
 				var summary = result[k]["summary"];
 				for(var site in summary){
+					if(!socialSites.includes(site))
+						continue;
 					if(!totalSummary.hasOwnProperty(site))
 						totalSummary[site] = 0;
 					totalSummary[site] += summary[site];
@@ -505,6 +871,10 @@ canvas.onmouseout =function(e){
 }
 
 
+
+
+
+
 function createTable(result){
 	var i = 0;
 	for (var key in result){
@@ -517,7 +887,7 @@ function createRow(result, key, id){
 	var time = ""+getTimeSpend(result[key]);
 	var per = result[key] / totalTimeSpend * 100;
 	per = per.toFixed(2); 
-	
+	labels.push(key + " " + per+"%");
 	var timeParts = time.split(",");
 	var hours = "00";
 	var mins = "00";
@@ -526,16 +896,16 @@ function createRow(result, key, id){
 		hours = timeParts[0];
 		mins = timeParts[1];
 		secs = timeParts[2];
-		labels.push(key + " " + per+"% "+hour+"h "+mins+"m "+secs+"s");
+	//	labels.push(key + " " + per+"% "+hour+"h "+mins+"m "+secs+"s");
 	}
 	else if(timeParts.length === 2){
 		mins = timeParts[0];
 		secs = timeParts[1];
-		labels.push(key + " " + per+"% "+mins+"m "+secs+"s");
+	//	labels.push(key + " " + per+"% "+mins+"m "+secs+"s");
 	}
 	else if(timeParts.length === 1){
 		secs = timeParts[0];
-		labels.push(key + " " + per+"% "+secs+"s");
+	//	labels.push(key + " " + per+"% "+secs+"s");
 	}
 	if(secs.length == 1)
 		secs = "0"+secs;
@@ -626,7 +996,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 }); 
 
 
- function showAnalytics(){
+ function aboutUs(){
  	chrome.tabs.create({"url":chrome.runtime.getURL("analytics.html")});
  }
 
