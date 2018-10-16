@@ -3,7 +3,7 @@
 //Doughnut Chart
 var data = [];
 var labels = [];
-var BGCOLOR = ["red","orange","purple", "#0000FF", "#8A2BE2", "#A52A2A", "#5F9EA0", "#D2691E","#DC143C","#008B8B","#FF8C00", "#8B0000", "#228B22","#FFD700", "#FF4500","#9ACD32"];
+var BGCOLOR = ["purple", "#0000FF", "#70726F", "#1D5907","#A52A2A","#DC143C","#008B8B","#FF8C00", "#8B0000", "#228B22","#FFD700", "#FF4500","#9ACD32"];
 var bColor = [];
 var canvas = null;
 var ctx = null;
@@ -228,7 +228,8 @@ window.onload = function(){
 
 //	document.getElementById("date_selector").datepicker();
 	//console.log("hello");
-//	document.body.style.backgroundImage = "url('img.jpg')";
+	//document.body.style.backgroundImage = "url('img1.jpg')";
+
 	initiallize();
 	
 }
@@ -271,7 +272,7 @@ function initiallize(){
 
 	activeStatsHeader = document.getElementById("default_ranges");
 	document.getElementById("default_list").addEventListener("click",getDefaultRangeOption);
-	activeDeafultStats = document.getElementById("prev_week");
+	activeDeafultStats = document.getElementById("cur_week");
 
 		document.getElementById("about_us").addEventListener("click", aboutUs);
 	setListenersToTable();
@@ -280,7 +281,8 @@ function initiallize(){
 	showChart(curDate);
 	setDoughnutListeners();
 	//showStats(curDate.getMonth(), null);
-	getPreviousWeekStats();
+    document.getElementById("default_ranges").innerText = "Current Week Stats";
+	getCurrentWeekStats();
 }
 
 
@@ -293,6 +295,7 @@ function setCloseListener(x){
 
 function close(e){
 	e.path[2].style.display = "none";
+	document.getElementById("cover").style.display = "none";
 }
 
 function hideHoveringDiv(e){
@@ -315,7 +318,12 @@ function showSites(socialSites) {
 	for(var site of socialSites){
 		var button = document.createElement('button');
 		button.className = 'btn';
-		button.textContent=site;
+		var span = document.createElement('span');
+		span.innerHTML = site+" <i class=\"fa fa-times fa-lg\" aria-hidden=\"true\" style=\"margin-left: 5px; color: #a2a1a1\" id="+i+" ></i>";
+		//button.textContent=site;
+		span.id = i;
+		//span.className = "btn";
+		button.appendChild(span);
 		button.id = i++;
 		well.appendChild(button);
 	}
@@ -329,8 +337,12 @@ function updateSocialSites(socialSiteList){
         activeAnalysisHeader.style.color = "grey";
         activeAnalysisHeader =  document.getElementById("today");
         activeAnalysisHeader.style.color = "black";
-        getPreviousWeekStats();
-	});
+        getCurrentWeekStats();
+        document.getElementById("default_ranges").innerText = "Current Week Stats";
+        activeDeafultStats.style.color = "grey";
+        activeDeafultStats = document.getElementById("cur_week");
+        activeDeafultStats.style.color = "black";
+    });
 
 }
 
@@ -341,7 +353,7 @@ function fetchSocialSites(resolve, reject){
 }
 
 async function removeSite(e){
-	if(e.target.className === "btn"){
+	if(e.target.className === "btn" || e.target.parentNode.parentNode.className === "btn" || e.target.parentNode.className === "btn"){
         var socialSites = await new Promise(fetchSocialSites);
 		socialSites.splice(e.target.id, 1);
         showSites(socialSites);
@@ -432,7 +444,19 @@ function getDefaultRangeOption(e){
 		activeDeafultStats.style.color = "black";
 		getPreviousMonthsStats(6);
 	}
-
+    else if(e.target.id === "cur_week"){
+        activeDeafultStats.style.color = "grey";
+        activeDeafultStats = e.target;
+        activeDeafultStats.style.color = "black";
+        getCurrentWeekStats();
+    }
+    else if(e.target.id === "cur_month"){
+        activeDeafultStats.style.color = "grey";
+        activeDeafultStats = e.target;
+        activeDeafultStats.style.color = "black";
+        getCurrentMonthStats();
+    }
+	document.getElementById("default_ranges").innerText = e.target.outerText;
 
 
 }
@@ -548,6 +572,7 @@ function showBarDivResult(e, t){
 	if (e[0]) {
 		//alert("hello");
 		barChartDiv.style.visibility = "visible";
+		barChartDiv.scrollIntoView(true);
 			//	console.log(JSON.stringify(activePoints[0]));
 			var chartData = e[0]['_chart'].config.data;
 			console.log(chartData);
@@ -594,6 +619,7 @@ function checkMaxSite(barDataset, site, time, date, i){
 
 
 function showBarChartUnstacked(barDataset, date1 ){
+    barMaxSiteTimeFind = {};
 	barAnalysis.options.scales.xAxes[0].stacked = false;
     barAnalysis.update();
     barAnalysis.render();
@@ -690,6 +716,28 @@ function getKey(date){
 	var key = ""+date.getFullYear()+date.getMonth()+date.getDate();
 //	console.log("Key to be searched = ", key);
 	return key;
+}
+
+function getCurrentWeekStats(){
+	var date1 = new Date();
+	var date2 = new Date();
+	date1.setDate(date1.getDate() - date1.getDay());
+    fetchStatsData(date1, date2);
+    var time = document.getElementById("time_range");
+    var timeSite = document.getElementById("time_range_site");
+    time.textContent = date1.toDateString() + " - "+ date2.toDateString();
+    timeSite.textContent = date1.toDateString() + " - "+ date2.toDateString();
+}
+
+function getCurrentMonthStats(){
+    var date1 = new Date();
+    var date2 = new Date();
+    date1.setDate(1);
+    fetchStatsData(date1, date2);
+    var time = document.getElementById("time_range");
+    var timeSite = document.getElementById("time_range_site");
+    time.textContent = date1.toDateString() + " - "+ date2.toDateString();
+    timeSite.textContent = date1.toDateString() + " - "+ date2.toDateString();
 }
 
 
@@ -807,7 +855,7 @@ async function showChart(date){
 			todayData.datasets[0].backgroundColor = bColor;
 			todayData.datasets[0].data = data;
 
-			createTable(result[key]["summary"]);
+			createTable(result[key]["summary"], socialSites);
 			todayData.labels = labels;
 
 		}
@@ -838,7 +886,7 @@ async function showChart(date){
 			todayData.datasets[0].backgroundColor = bColor;
 			todayData.datasets[0].data = data;
 
-			createTable(totalSummary);
+			createTable(totalSummary, socialSites);
 			todayData.labels = labels;
 
 		}
@@ -931,11 +979,13 @@ canvas.onmouseout =function(e){
 
 
 
-function createTable(result){
+function createTable(result, socialSites){
 	var i = 0;
 	for (var key in result){
+		if(socialSites.includes(key)){
 		dataTable.appendChild(createRow(result, key, i));
 		i++;
+		}
 	}
 }
 
