@@ -903,12 +903,10 @@ async function showChart(date){
 
 function setListenersToTable(){
 dataTable.addEventListener("mouseover", function(e){
-	
-	var rowHovered = e.target.parentElement;
-	var body = document.querySelector("body")
-	console.log("Selected= "+body);
-	console.log("Hovered row = "+rowHovered);
-	console.log("Hovered row = "+rowHovered.id);
+    var rowHovered = e.target.parentElement;
+    if(e.target.parentElement.id === "l")
+        rowHovered = e.target.parentElement.parentElement;
+    var body = document.querySelector("body")
 
 	if(rowHovered != body && rowHovered.id != "table_head"){
 		rowHovered.style.color = "black";
@@ -990,104 +988,110 @@ function createTable(result, socialSites){
 }
 
 function createRow(result, key, id){
-	var time = ""+getTimeSpend(result[key]);
-	var per = result[key] / totalTimeSpend * 100;
-	per = per.toFixed(2); 
-	labels.push(key + " " + per+"%");
-	var timeParts = time.split(",");
-	var hours = "00";
-	var mins = "00";
-	var secs = "00";
-	if(timeParts.length === 3){
-		hours = timeParts[0];
-		mins = timeParts[1];
-		secs = timeParts[2];
-	//	labels.push(key + " " + per+"% "+hour+"h "+mins+"m "+secs+"s");
-	}
-	else if(timeParts.length === 2){
-		mins = timeParts[0];
-		secs = timeParts[1];
-	//	labels.push(key + " " + per+"% "+mins+"m "+secs+"s");
-	}
-	else if(timeParts.length === 1){
-		secs = timeParts[0];
-	//	labels.push(key + " " + per+"% "+secs+"s");
-	}
-	if(secs.length == 1)
-		secs = "0"+secs;
-	if(mins.length == 1)
-		mins = "0"+mins;
-	if(hours.length == 1)
-		hours = "0"+hours;
-		
-	console.log(timeParts.length);
-	console.log(timeParts);
-	console.log(typeof secs);
+    var time = ""+getTimeSpend(result[key]);
+    var per = result[key] / totalTimeSpend * 100;
+    per = per.toFixed(2);
+    labels.push(key + " " + per+"%");
+    var timeParts = time.split(",");
+    var hours = "00";
+    var mins = "00";
+    var secs = "00";
+    if(timeParts.length === 3){
+        hours = timeParts[0];
+        mins = timeParts[1];
+        secs = timeParts[2];
+        //	labels.push(key + " " + per+"% "+hour+"h "+mins+"m "+secs+"s");
+    }
+    else if(timeParts.length === 2){
+        mins = timeParts[0];
+        secs = timeParts[1];
+        //	labels.push(key + " " + per+"% "+mins+"m "+secs+"s");
+    }
+    else if(timeParts.length === 1){
+        secs = timeParts[0];
+        //	labels.push(key + " " + per+"% "+secs+"s");
+    }
+    if(secs.length == 1)
+        secs = "0"+secs;
+    if(mins.length == 1)
+        mins = "0"+mins;
+    if(hours.length == 1)
+        hours = "0"+hours;
 
-	var row = document.createElement('TR');
-	row.id = id;
-	var s = document.createElement('span');
-	s.className = "badge";
-	s.textContent = ".";
-	s.style.color = BGCOLOR[id];
-	s.style.backgroundColor=BGCOLOR[id];
-	var label = document.createElement('TD');
-	label.appendChild(s);
+    console.log(timeParts.length);
+    console.log(timeParts);
+    console.log(typeof secs);
 
-	var domain = document.createElement('TD');
-	domain.textContent = key;
+    var row = document.createElement('TR');
+    row.id = id;
+    var s = document.createElement('span');
+    s.className = "badge";
+    s.textContent = ".";
+    s.style.color = BGCOLOR[id];
+    s.style.backgroundColor=BGCOLOR[id];
+    var label = document.createElement('TD');
+    label.id = "l";
+    label.appendChild(s);
 
-	var empty1 = document.createElement('TD');
-	empty1.textContent = "sssssssss";
-	empty1.style.color="#fff";
-	var empty2 = document.createElement('TD');
-	empty2.textContent = "sss";
-	empty2.style.color="#fff";
+    var domain = document.createElement('TD');
+    domain.textContent = key;
+    domain.style.textAlign = "left";
+    var empty1 = document.createElement('TD');
+    empty1.textContent = "sssssssss";
+    empty1.style.color="#fff";
+    var empty2 = document.createElement('TD');
+    empty2.textContent = "sss";
+    empty2.style.color="#fff";
+    var empty3 = document.createElement('TD');
+    empty3.textContent = "s";
+    empty3.style.color="#fff";
 
-	var percentage = document.createElement('TD');
-	percentage.textContent = per;
-	var percentageMark = document.createElement('TD');
-	percentageMark.textContent = "%";
-	var hour = document.createElement('TD');
-	hour.textContent = hours;
+    var percentage = document.createElement('TD');
+    percentage.textContent = per;
 
-	var hMark = document.createElement('TD');
-	hMark.textContent = "h";
-	if(hours != "00"){
-		hour.style.color = "black";
-		hMark.style.color = "black";
-	}
-	var min = document.createElement('TD');
-	min.textContent = mins;
-	var mMark = document.createElement('TD');
-	mMark.textContent = "m";
-	if(mins != "00"){
-		min.style.color = "black";
-		mMark.style.color = "black";
-	}
-	var sec = document.createElement('TD');
-	sec.textContent = secs;
-	var sMark = document.createElement('TD');
-	sMark.textContent = "s";
-	if(secs != "00"){
-		sec.style.color = "black";
-		sMark.style.color = "black";
-	}
+    var percentageMark = document.createElement('TD');
+    percentageMark.textContent = "%";
+    var hour = document.createElement('TD');
+    hour.textContent = hours;
 
-	row.appendChild(label);
-	row.appendChild(domain);
-	row.appendChild(empty1);
-	row.appendChild(percentage);
-	row.appendChild(percentageMark);
-	row.appendChild(empty2);
-	row.appendChild(hour);
-	row.appendChild(hMark);
-	row.appendChild(min);
-	row.appendChild(mMark);
-	row.appendChild(sec);
-	row.appendChild(sMark);
+    var hMark = document.createElement('TD');
+    hMark.textContent = "h";
+    if(hours != "00"){
+        hour.style.color = "black";
+        hMark.style.color = "black";
+    }
+    var min = document.createElement('TD');
+    min.textContent = mins;
+    var mMark = document.createElement('TD');
+    mMark.textContent = "m";
+    if(mins != "00"){
+        min.style.color = "black";
+        mMark.style.color = "black";
+    }
+    var sec = document.createElement('TD');
+    sec.textContent = secs;
+    var sMark = document.createElement('TD');
+    sMark.textContent = "s";
+    if(secs != "00"){
+        sec.style.color = "black";
+        sMark.style.color = "black";
+    }
 
-	return row;
+    row.appendChild(label);
+    row.appendChild(empty3);
+    row.appendChild(domain);
+    row.appendChild(empty1);
+    row.appendChild(percentage);
+    row.appendChild(percentageMark);
+    row.appendChild(empty2);
+    row.appendChild(hour);
+    row.appendChild(hMark);
+    row.appendChild(min);
+    row.appendChild(mMark);
+    row.appendChild(sec);
+    row.appendChild(sMark);
+
+    return row;
 }
 
 

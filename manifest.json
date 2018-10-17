@@ -13,7 +13,7 @@
             "background.js"
         ]
     },
-//  "homepage_url": "http://localhost:8080/newtab.html",
+  //"homepage_url": "http://localhost:8080/newtab.html",
      "chrome_url_overrides": {
         "newtab": "newtab.html"
     },

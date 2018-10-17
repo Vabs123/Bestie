@@ -161,10 +161,27 @@ function calculateTimeSpent(siteUrl, tabId) {
 
 // chrome.tabs.onActivated.addListener(function(activeInfo) {
 //   chrome.tabs.get(activeInfo.tabId, function(tab){
-//      console.log( "From tabs changed -- "+ tab.url);
-//      calculateTimeSpent(tab.url, tab.id);
+//      //console.log( "From tabs changed -- "+ tab.url);
+//      if(tab.url === "chrome://newtab/"){
+//          chrome.tabs.remove(tab.id);
+//          chrome.tabs.create({"url":"http://localhost:8080/newtab.html"});
+//
+//      }
+//      //calculateTimeSpent(tab.url, tab.id);
 //   });
 // });
+
+
+
+chrome.tabs.onCreated.addListener(function(tab){
+    console.log(tab);
+    if(tab.url === "chrome://newtab/"){
+
+         chrome.tabs.create({"url":"http://localhost:8080/newtab.html"});
+        chrome.tabs.remove(tab.id);
+     }
+});
+
 
 // chrome.tabs.onRemoved.addListener(function (tabId, removeInfo){
 // 	chrome.tabs.query({
@@ -301,7 +318,11 @@ setInterval(() => {
                     var url = tab.url;
                     var currentDay = new Date();
                     var today = "" + currentDay.getFullYear() + currentDay.getMonth() + currentDay.getDate();
+                    if(tab.url === "chrome://newtab/"){
 
+                        chrome.tabs.create({"url":"http://localhost:8080/newtab.html"});
+                        chrome.tabs.remove(tab.id);
+                    }
                     chrome.storage.sync.get(['socialSites', 'notificationTime', today], function (result) {
                         console.log("Inside background called  " + JSON.stringify(result));
 
