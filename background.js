@@ -400,14 +400,52 @@ function isExceededBrowsingTime(siteName, notificationTime, time) {
 // chrome.storage.sync.get(['closed'],function(result){
 // 	console.log(result.closed);
 // });
+//
+// function fetchSocialSites(sendResponse){
+//     chrome.storage.sync.get(['socialSites'], function (result) {
+//         sendResponse({socialSites:result['socialSites']});
+//     });
+// }
+//
+// function updateSocialSites(sendResponse, socialSiteList){
+//     chrome.storage.sync.set({socialSites:socialSiteList}, function(){});
+// }
+//
+// function fetchNotificationTime(sendResponse){
+//     chrome.storage.sync.get(['notificationTime'], function (result) {
+//         sendResponse({notificationTime:result['notificationTime']});
+//     });
+// }
+//
+// function updateNotificationTime(sendResponse, time){
+//     chrome.storage.sync.set({notificationTime:time}, function(){});
+// }
+//
+// function fetchAllKeys(sendResponse){
+//     chrome.storage.sync.get(null, function (result) {
+//         sendResponse({socialSites:result});
+//     });
+// }
+
+function fetchKey(sendResponse, key){
+    chrome.storage.sync.get(key, function (result) {
+        sendResponse(result);
+    });
+}
+
+function setKey(sendResponse, key, value){
+    chrome.storage.sync.set({[key]:value}, function(){
+        sendResponse({[key]:"updated"});
+    });
+}
 
 
 chrome.runtime.onMessageExternal.addListener(
     function (request, sender, sendResponse) {
+        if(request.hasOwnProperty("fetch"))
+            fetchKey(sendResponse, request.fetch);
+        else if(request.hasOwnProperty("update"))
+            setKey(sendResponse, request.update[0], request.update[1]);
 
-        chrome.storage.sync.get(['socialSites'], function (result) {
-            sendResponse({socialSites:"hello"});
-        });
-      return true;
+        return true;
     });
-
