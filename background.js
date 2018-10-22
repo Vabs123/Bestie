@@ -107,6 +107,10 @@ function storeActiveTimeOfSocialSite(stTime, endTime, curSite) {
         }
         else
             a = result[key];
+        if(!a.hasOwnProperty(curSite)) {
+            a[curSite] = [];
+            a["summary"][curSite] = 0;
+        }
         a[curSite][a[curSite].length] = val1;
         if (val2)
             a[curSite][a[curSite].length] = val2;
@@ -418,6 +422,7 @@ function isExceededBrowsingTime(siteName, notificationTime, time) {
 
 //chrome.storage.sync.clear(function(){console.log("clear all")});
 
+//chrome.storage.sync.remove("key");
 // chrome.storage.sync.get(['closed'],function(result){
 // 	console.log(result.closed);
 // });
