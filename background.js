@@ -343,6 +343,7 @@ setInterval(() => {
                         var siteName = isSiteTracked(tab.url);
                         console.log(" Started Time after window opened --- " + siteName);
                         // if(siteName)
+                        //     showProgressBar(tab.id);
                         // 	startTime = new Date();
                         // updateCurrentSite(siteName, tab.id);
                         calculateTimeSpent(tab.url, tab.id);
@@ -475,3 +476,29 @@ chrome.runtime.onMessageExternal.addListener(
 
         return true;
     });
+
+
+
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+       console.log(request);
+      if(isSiteTracked(request.url))
+           sendResponse({progressbar:"true"});
+      else
+          sendResponse({progressbar: "false"});
+    });
+
+function showProgressBar(tabId){
+    chrome.tabs.sendMessage(tabId, {update:"progressBar"});
+}
+
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+  chrome.tabs.get(activeInfo.tabId, function(tab){
+     //console.log( "From tabs changed -- "+ tab.url);
+      if(isSiteTracked(tab.url))
+        showProgressBar(tab.id);
+
+
+     //calculateTimeSpent(tab.url, tab.id);
+  });
+});
