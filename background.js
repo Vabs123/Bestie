@@ -10,6 +10,8 @@ var socialSiteTrack = {
     name: null,
     id: null
 };
+var onlineTime = 0;
+
 
 var SAVETIME = 900;
 var saveTimeCounter = 0;
@@ -80,16 +82,16 @@ function storeActiveTimeOfSocialSite(stTime, endTime, curSite) {
     var key = "" + stTime.getFullYear() + stTime.getMonth() + stTime.getDate();
     var tmpEnd = null, tmpStart = null, val1 = null, val2 = null;
 
-    if (endTime.getDate() > stTime.getDate()) {
-        tmpEnd = new Date(stTime.getFullYear(), stTime.getMonth(), stTime.getDate(), 23, 59);
-        tmpStart = new Date(endTime.getFullYear(), endTime.getMonth(), endTime.getDate());
-    }
-
-    if (tmpStart && tmpEnd) {
-        val1 = {start: stTime.getTime(), end: tmpEnd.getTime()};
-        val2 = {start: tmpStart.getTime(), end: endTime.getTime()};
-    }
-    else
+    // if (endTime.getDate() > stTime.getDate()) {
+    //     tmpEnd = new Date(stTime.getFullYear(), stTime.getMonth(), stTime.getDate(), 23, 59);
+    //     tmpStart = new Date(endTime.getFullYear(), endTime.getMonth(), endTime.getDate());
+    // }
+    //
+    // if (tmpStart && tmpEnd) {
+    //     val1 = {start: stTime.getTime(), end: tmpEnd.getTime()};
+    //     val2 = {start: tmpStart.getTime(), end: endTime.getTime()};
+    // }
+    // else
         val1 = {start: stTime.getTime(), end: endTime.getTime()};
 
     chrome.storage.sync.get([key], function (result) {
@@ -100,6 +102,7 @@ function storeActiveTimeOfSocialSite(stTime, endTime, curSite) {
             console.log(key + " is not found in db");
             a = {};
             a["summary"] = {};
+            a["totalTime"] = 0;
             for (var site of socialSites) {
                 a[site] = [];
                 a["summary"][site] = 0;
@@ -112,10 +115,11 @@ function storeActiveTimeOfSocialSite(stTime, endTime, curSite) {
             a["summary"][curSite] = 0;
         }
         a[curSite][a[curSite].length] = val1;
-        if (val2)
-            a[curSite][a[curSite].length] = val2;
+        // if (val2)
+        //     a[curSite][a[curSite].length] = val2;
         a["summary"][curSite] += endTime - stTime;
-
+        a["totalTime"] += onlineTime;
+        onlineTime = 0;
         chrome.storage.sync.set({[key]: a}, function () {
             console.log("value saved = " + JSON.stringify(a) + "Key = " + key);
         });
@@ -272,6 +276,13 @@ chrome.tabs.onCreated.addListener(function(tab){
 //****************************************************************************************
 //							Main Function
 
+function getKey(date){
+    var key = ""+date.getFullYear()+date.getMonth()+date.getDate();
+//	console.log("Key to be searched = ", key);
+    return key;
+}
+
+
 
 function saveData() {
     if (isCurrentlyTracking()) {
@@ -284,6 +295,19 @@ function saveData() {
     }
 }
 
+function saveTotalTime(cur){
+    return new Promise((resolve, reject) => {
+        var key = getKey(cur);
+        chrome.storage.sync.get(key, function (result) {
+            result[key]["totalTime"] += onlineTime;
+            onlineTime = 0;
+            chrome.storage.sync.set({[key]: result[key]});
+            resolve(1);
+        });
+    });
+}
+
+var updated = false;
 
 setInterval(() => {
     chrome.windows.getCurrent({populate: true, windowTypes: ["normal"]}, function (w) {
@@ -313,6 +337,18 @@ setInterval(() => {
                 });
             }
             else if (w.focused && newState === "active") {
+                onlineTime += 1;
+                var currentDay = new Date();
+                if(currentDay.getHours() === 23 && currentDay.getMinutes() >= 58) {
+                    if(!updated) {
+                        updated =true;
+                        saveData();
+                        saveTotalTime(currentDay);
+                    }
+                }
+                else
+                    updated = false;
+
                 console.log("Focus Changed back" + focus);
                 chrome.tabs.query({
                     active: true,
@@ -421,7 +457,7 @@ function isExceededBrowsingTime(siteName, notificationTime, time) {
 //         });
 
 
-//chrome.storage.sync.clear(function(){console.log("clear all")});
+// chrome.storage.sync.clear(function(){console.log("clear all")});
 
 //chrome.storage.sync.remove("key");
 // chrome.storage.sync.get(['closed'],function(result){
@@ -455,9 +491,12 @@ function isExceededBrowsingTime(siteName, notificationTime, time) {
 // }
 
 function fetchKey(sendResponse, key){
-    chrome.storage.sync.get(key, function (result) {
-        sendResponse(result);
+    saveTotalTime(new Date()).then((res) => {
+        chrome.storage.sync.get(key, function (result) {
+            sendResponse(result);
+        });
     });
+
 }
 
 function setKey(sendResponse, key, value){
