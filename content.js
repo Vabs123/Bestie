@@ -45,15 +45,20 @@ function showProgressBarAtTop(timeSpent, totalSocialTime){
     var per = getPercentage(timeSpent,totalSocialTime);
     var totalTime = getTimeString(""+getTimeSpend(totalSocialTime));
 
-    var myvar = '<div id="myprogressbar" style="z-index: 100000;background-color: white;width: 100%;POSITION: relative;padding: 0px;"><span id="close" style="float: right;position: relative; margin:0%; padding: 0%; margin-right: 0.6%;cursor: pointer;vertical-align: middle; font-size: 24px; ">X</span><div id="myProgress" style="width: 98%;background-color: #ddd;">  <div id="myBar" style="width: 50%; height: 25px; background-color: rgb(76, 175, 80); text-align: center; line-height: 25px; color: white; font-size: 20px;"></div><div id = "pBar" style="'+
-        '    position: absolute;'+
-        '    z-index: 100000000;'+
-        '    top: 2.5px;'+
-        '    font-size: 18px;'+
-        '    left: 40%;'+
-        '    color: white; cursor: default;'+
-        '    text-shadow: 2px 2px 8px black;'+
-        '">1m/2m</div></div></div>';
+    // var myvar = '<div id="myprogressbar" style="z-index: 100000;background-color: white;width: 100%;POSITION: relative;padding: 0px;"><span id="close" style="float: right;position: relative; margin:0%; padding: 0%; margin-right: 0.6%;cursor: pointer;vertical-align: middle; font-size: 24px; ">X</span><div id="myProgress" style="width: 98%;background-color: #ddd;">  <div id="myBar" style="width: 50%; height: 25px; background-color: rgb(76, 175, 80); text-align: center; line-height: 25px; color: white; font-size: 20px;"></div><div id = "pBar" style="'+
+    //     '    position: absolute;'+
+    //     '    z-index: 100000000;'+
+    //     '    top: 2.5px;'+
+    //     '    font-size: 18px;'+
+    //     '    left: 40%;'+
+    //     '    color: white; cursor: default;'+
+    //     '    text-shadow: 2px 2px 8px black;'+
+    //     '">1m/2m</div></div></div>';
+
+
+    var myvar = '<div id="myprogressbar" style="z-index: 100000;background-color: white;width: 100%;POSITION: relative;padding: 0px;"><span id="close" style="height: 25px;/* float: right; */position: absolute;margin:0%;padding: 0%;/* margin-right: 0.6%; */cursor: pointer;vertical-align: middle;font-size: 24px;width: 31px;right: 0;text-align: center;">X</span><div id="myProgress" style="width: 98%;background-color: #ddd;">  <div id="myBar" style="width: 4%; height: 25px; background-color: rgb(76, 175, 80); text-align: center; line-height: 25px; color: white; font-size: 20px;"></div><div id="pBar" style="position: absolute;z-index: 100000000; top: 2.5px; font-size: 18px;line-height: 18px;left: 40%;/* font-family: arial; */color: white;cursor: default;text-shadow: 2px 2px 8px black;">Time spent : 1m /45m  (4%)</div></div></div>';
+
+
 
     var d = document.createElement('DIV');
     d.innerHTML = myvar;
@@ -125,11 +130,12 @@ function fetchKey( key) {
 async function calculateTotalTimeSpend(){
     var totalTime = 0;
     var key = getKey(new Date());
-    var result = await fetchKey([key, "notificationTime"]);
+    var result = await fetchKey([key, "notificationTime", "socialSites"]);
     console.log(result);
     var time = result["notificationTime"];
 
     for(var site in result[key]["summary"]){
+        if(result["socialSites"].includes(site))
         totalTime += result[key]["summary"][site];
     }
 
