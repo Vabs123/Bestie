@@ -16,16 +16,52 @@ var onlineTime = 0;
 var SAVETIME = 900;
 var saveTimeCounter = 0;
 
-chrome.storage.sync.get(null,function(result){
-    if(!result.hasOwnProperty("socialSites")) {
-        sites = ["facebook", "instagram", "quora", "youtube", "twitter"];
-        chrome.storage.sync.set({socialSites:sites}, function(){});
-    }
-    if(!result.hasOwnProperty("notificationTime")) {
-        time = "0:45";
-        chrome.storage.sync.set({notificationTime:time}, function(){});
-    }
-});
+//update this
+//initializeTodayObject();
+function initializeTodayObject(){
+    var key = getKey(new Date());
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(null, function (result) {
+          var initialize = null;
+
+          if (!result.hasOwnProperty("socialSites")) {
+                var sites = ["facebook", "instagram", "quora", "youtube", "twitter"];
+                initialize = {};
+                initialize["socialSites"] = sites;
+          }
+            if (!result.hasOwnProperty("notificationTime")) {
+                var time = "0:45";
+                if(!initialize)
+                    initialize = {};
+                initialize["notificationTime"] = time;
+            }
+            if (!result.hasOwnProperty(key)) {
+                if(!initialize)
+                    initialize = {};
+
+                var today = {};
+                today["summary"] = {};
+                today["totalTime"] = 0;
+                for (var site of socialSites) {
+                    today[site] = [];
+                    today["summary"][site] = 0;
+                }
+                initialize[key] = today;
+            }
+            if(initialize){
+                chrome.storage.sync.set(initialize, function(){
+                    resolve(1);
+                });
+            }
+            else{
+                resolve(1);
+            }
+        });
+    });
+}
+
+
+
 
 function isSiteTracked(siteUrl) {
     var url = new URL(siteUrl).hostname;
@@ -297,12 +333,17 @@ function saveData() {
 
 function saveTotalTime(cur){
     return new Promise((resolve, reject) => {
+
         var key = getKey(cur);
-        chrome.storage.sync.get(key, function (result) {
-            result[key]["totalTime"] += onlineTime;
-            onlineTime = 0;
-            chrome.storage.sync.set({[key]: result[key]});
-            resolve(1);
+        initializeTodayObject().then(() => {
+            chrome.storage.sync.get(key, function (result) {
+                result[key]["totalTime"] += onlineTime;
+                onlineTime = 0;
+                chrome.storage.sync.set({[key]: result[key]}, function () {
+                    resolve(1);
+                });
+
+            });
         });
     });
 }
@@ -459,11 +500,11 @@ function isExceededBrowsingTime(siteName, notificationTime, time) {
 
 // chrome.storage.sync.clear(function(){console.log("clear all")});
 
-//chrome.storage.sync.remove("key");
-// chrome.storage.sync.get(['closed'],function(result){
-// 	console.log(result.closed);
+// chrome.storage.sync.remove(["a","b"]);
+// chrome.storage.sync.get(null,function(result){
+// 	console.log(result);
 // });
-//
+
 // function fetchSocialSites(sendResponse){
 //     chrome.storage.sync.get(['socialSites'], function (result) {
 //         sendResponse({socialSites:result['socialSites']});
@@ -541,3 +582,10 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
      //calculateTimeSpent(tab.url, tab.id);
   });
 });
+
+// chrome.storage.sync.set({a:1, b:3}, function(){
+//     chrome.storage.sync.get(null, function(result){
+//
+//         console.log(result);
+//     });
+// });
