@@ -155,13 +155,13 @@ function storeActiveTimeOfSocialSite(stTime, endTime, curSite) {
         //     a[curSite][a[curSite].length] = val2;
         a["summary"][curSite] += endTime - stTime;
         a["totalTime"] += onlineTime;
-        onlineTime = 0;
+
         chrome.storage.sync.set({[key]: a}, function () {
+            onlineTime = 0;
             console.log("value saved = " + JSON.stringify(a) + "Key = " + key);
         });
 
     });
-
 
 }
 
@@ -338,8 +338,9 @@ function saveTotalTime(cur){
         initializeTodayObject().then(() => {
             chrome.storage.sync.get(key, function (result) {
                 result[key]["totalTime"] += onlineTime;
-                onlineTime = 0;
+
                 chrome.storage.sync.set({[key]: result[key]}, function () {
+                    onlineTime = 0;
                     resolve(1);
                 });
 
