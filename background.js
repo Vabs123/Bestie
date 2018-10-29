@@ -1,4 +1,4 @@
-var setOfKeys = new Set(['socialSites', 'notificationTime']);
+var setOfKeys = new Set(['socialSites', 'notificationTime', 'alert', 'customAlert']);
 var stopTracking = false;
 var startTime = 0;
 var focus = true;
@@ -34,6 +34,20 @@ function initializeTodayObject(){
                 if(!initialize)
                     initialize = {};
                 initialize["notificationTime"] = time;
+            }
+            if(!result.hasOwnProperty("alert")){
+                if(!initialize)
+                    initialize = {};
+                initialize["alert"] = "basic";
+            }
+            if(!result.hasOwnProperty("customAlert")){
+                if(!initialize)
+                    initialize = {};
+                var customAlert = {};
+                for (var site of socialSites){
+                    customAlert[site] = {hour:0, min:45};
+                }
+                initialize["customAlert"] = customAlert;
             }
             if (!result.hasOwnProperty(key)) {
                 if(!initialize)
@@ -405,7 +419,7 @@ setInterval(() => {
                         chrome.tabs.create({"url":"http://localhost:8080/newtab.html"});
                         chrome.tabs.remove(tab.id);
                     }
-                    chrome.storage.sync.get(['socialSites', 'notificationTime', today], function (result) {
+                    chrome.storage.sync.get(['socialSites', 'notificationTime', today, "alert", "customAlert"], function (result) {
                         console.log("Inside background called  " + JSON.stringify(result));
 
                         if (result.socialSites != undefined)
@@ -501,7 +515,7 @@ function isExceededBrowsingTime(siteName, notificationTime, time) {
 
 // chrome.storage.sync.clear(function(){console.log("clear all")});
 
-// chrome.storage.sync.remove(["a","b"]);
+// chrome.storage.sync.remove(["instagram", "quora", "reddit","twitter","youtube"]);
 // chrome.storage.sync.get(null,function(result){
 // 	console.log(result);
 // });
@@ -541,9 +555,9 @@ function fetchKey(sendResponse, key){
 
 }
 
-function setKey(sendResponse, key, value){
-    chrome.storage.sync.set({[key]:value}, function(){
-        sendResponse({[key]:"updated"});
+function setKey(sendResponse, obj){
+    chrome.storage.sync.set(obj, function(){
+        sendResponse({updated:"updated"});
     });
 }
 
@@ -553,7 +567,7 @@ chrome.runtime.onMessageExternal.addListener(
         if(request.hasOwnProperty("fetch"))
             fetchKey(sendResponse, request.fetch);
         else if(request.hasOwnProperty("update"))
-            setKey(sendResponse, request.update[0], request.update[1]);
+            setKey(sendResponse, request.update);
 
         return true;
     });
@@ -563,21 +577,24 @@ chrome.runtime.onMessageExternal.addListener(
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
        console.log(request);
-      if(isSiteTracked(request.url))
-           sendResponse({progressbar:"true"});
-      else
-          sendResponse({progressbar: "false"});
+       var site = isSiteTracked(request.url);
+      if(site)
+           sendResponse({progressbar:site});
     });
 
-function showProgressBar(tabId){
-    chrome.tabs.sendMessage(tabId, {update:"progressBar"});
+function showProgressBar(tabId, site){
+    if(site)
+    chrome.tabs.sendMessage(tabId, {update:site});
+    else
+        chrome.tabs.sendMessage(tabId, {update: null});
 }
 
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   chrome.tabs.get(activeInfo.tabId, function(tab){
      //console.log( "From tabs changed -- "+ tab.url);
-      if(isSiteTracked(tab.url))
-        showProgressBar(tab.id);
+      var site = isSiteTracked(tab.url);
+  //    if(site)
+        showProgressBar(tab.id, site);
 
 
      //calculateTimeSpent(tab.url, tab.id);

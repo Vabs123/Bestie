@@ -3,35 +3,27 @@ console.log("hello");
 
 chrome.runtime.sendMessage({url: window.location.href}, function(response) {
     console.log(response);
-    if(response.progressbar === "true"){
+    if(response){
         if(!isProgressBarAtTopPresent()) {
-            calculateTotalTimeSpend().then(showProgressBar);
+            calculateTotalTimeSpend(response.progressbar).then(showProgressBarAtTop);
         }
+    }
+    else{
+        if(isProgressBarAtTopPresent())
+            hideProgressBar();
     }
 });
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
-    if(request.update === "progressBar"){
-        if(isProgressBarAtTopPresent())
-            hideProgressBar();
-            calculateTotalTimeSpend().then(showProgressBar);
-
+    if(isProgressBarAtTopPresent())
+        hideProgressBar();
+    if(request.update ){
+            calculateTotalTimeSpend(request.update).then(showProgressBarAtTop);
     }
 
 
 });
 
-
-async function showProgressBar(time){
-    console.log(time);
-
-  var timeSpent = ~~time.usedTime;
-  var totalTime = ""+time.totalTime;
-  totalTime = getTimeInMilliseconds(totalTime);
-  if(timeSpent >= totalTime)
-      timeSpent = totalTime;
-  showProgressBarAtTop(timeSpent, totalTime);
-}
 
 function getTimeInMilliseconds(time){
     var timeParts = time.split(':');
@@ -41,7 +33,11 @@ function getTimeInMilliseconds(time){
 }
 
 
-function showProgressBarAtTop(timeSpent, totalSocialTime){
+function showProgressBarAtTop(time){
+
+    var totalSocialTime = ~~time.totalTime;
+    var timeSpent = ~~time.usedTime;
+
     var per = getPercentage(timeSpent,totalSocialTime);
     var totalTime = getTimeString(""+getTimeSpend(totalSocialTime));
 
@@ -127,20 +123,40 @@ function fetchKey( key) {
     });
 }
 
-async function calculateTotalTimeSpend(){
-    var totalTime = 0;
-    var key = getKey(new Date());
-    var result = await fetchKey([key, "notificationTime", "socialSites"]);
-    console.log(result);
-    var time = result["notificationTime"];
+async function calculateTotalTimeSpend(siteName){
 
-    for(var site in result[key]["summary"]){
+    var key = getKey(new Date());
+    var result = await fetchKey([key, "notificationTime", "socialSites", "alert", "customAlert"]);
+    console.log(result);
+
+    if(result["alert"] === "basic")
+        return calculateBasicAlertTime(result, key);
+
+    return calculateCustomAlertTime(siteName, result, key);
+}
+
+
+function calculateBasicAlertTime(result, today){
+    var totalTime = 0;
+    var time = result["notificationTime"];
+    time = getTimeInMilliseconds(time);
+    for(var site in result[today]["summary"]){
         if(result["socialSites"].includes(site))
-        totalTime += result[key]["summary"][site];
+            totalTime += result[today]["summary"][site];
     }
 
     return {usedTime:totalTime, totalTime: time};
 }
+
+
+function calculateCustomAlertTime(siteName, result, today){
+    var timeSpend = result[today]["summary"][siteName];
+    var time = result["customAlert"][siteName];
+    var totalTime = ((time.hour * 3600) + (time.min * 60)) * 1000;
+    return {usedTime:timeSpend, totalTime: totalTime};
+}
+
+
 
 
 function getTimeSpend(time){
