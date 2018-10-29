@@ -1,5 +1,6 @@
-console.log("hello");
+console.log(chrome.runtime.id);
 //var setOfKeys = new Set(['socialSites', 'notificationTime']);
+document.getElementById("extension_id").innerText = chrome.runtime.id;
 
 chrome.runtime.sendMessage({url: window.location.href}, function(response) {
     console.log(response);

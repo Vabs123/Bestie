@@ -18,6 +18,11 @@ var saveTimeCounter = 0;
 
 //update this
 //initializeTodayObject();
+//  chrome.storage.sync.set({extension_id:chrome.runtime.id}, function(){
+//      chrome.storage.sync.get("extension_id", (result)=>{
+//         console.log(result);
+//      });
+//  });
 function initializeTodayObject(){
     var key = getKey(new Date());
     return new Promise((resolve, reject) => {
