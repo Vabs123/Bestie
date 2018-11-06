@@ -7,7 +7,7 @@ chrome.runtime.sendMessage({url: window.location.href}, function(response) {
     if(isProgressBarAtTopPresent())
         hideProgressBar();
     if(response){
-        calculateTotalTimeSpend(response.progressbar).then(showProgressBarAtTop);
+        calculateTotalTimeSpend(response.progressbar);
 
     }
 });
@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     if(isProgressBarAtTopPresent())
         hideProgressBar();
     if(request.update ){
-            calculateTotalTimeSpend(request.update).then(showProgressBarAtTop);
+            calculateTotalTimeSpend(request.update);
     }
 });
 
@@ -99,13 +99,15 @@ function fetchKey( key) {
     });
 }
 
-async function calculateTotalTimeSpend(siteName){
-
+function calculateTotalTimeSpend(siteName){
     var key = getKey(new Date());
-    var result = await fetchKey([key, "notificationTime", "socialSites", "alert", "customAlert"]);
-    if(result["alert"] === "basic")
-        return calculateBasicAlertTime(result, key);
-    return calculateCustomAlertTime(siteName, result, key);
+    fetchKey([key, "notificationTime", "socialSites", "alert", "customAlert"]).then(function(result){
+         if(result["alert"] === "basic")
+                showProgressBarAtTop(calculateBasicAlertTime(result, key));
+         else
+            showProgressBarAtTop(calculateCustomAlertTime(siteName, result, key));
+
+    });
 }
 
 
