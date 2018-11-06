@@ -13,7 +13,8 @@ var socialSiteTrack = {
 var onlineTime = 0;
 var SAVETIME = 900;
 var saveTimeCounter = 0;
-
+var NEWTAB = "chrome://newtab/";
+var MY_NEWTAB = "http://extensionslabs.com/socialMediaTracker/newtab.html";
 
 function initializeTodayObject(){
     var key = getKey(new Date());
@@ -158,9 +159,7 @@ function storeActiveTimeOfSocialSite(stTime, endTime, curSite) {
             onlineTime = 0;
             console.log("value saved = " + JSON.stringify(a) + "Key = " + key);
         });
-
     });
-
 }
 
 function calculateTimeSpent(siteUrl, tabId) {
@@ -189,9 +188,9 @@ function calculateTimeSpent(siteUrl, tabId) {
 
 chrome.tabs.onCreated.addListener(function(tab){
     console.log(tab);
-    if(tab.url === "chrome://newtab/"){
+    if(tab.url === NEWTAB){
 
-         chrome.tabs.create({"url":"http://extensionslabs.com/socialMediaTracker/newtab.html"});
+         chrome.tabs.create({"url":MY_NEWTAB});
         chrome.tabs.remove(tab.id);
      }
 });
@@ -270,9 +269,9 @@ setInterval(() => {
                     var url = tab.url;
                     var currentDay = new Date();
                     var today = "" + currentDay.getFullYear() + currentDay.getMonth() + currentDay.getDate();
-                    if(tab.url === "chrome://newtab/"){
+                    if(tab.url === NEWTAB){
 
-                        chrome.tabs.create({"url":"http://extensionslabs.com/socialMediaTracker/newtab.html"});
+                        chrome.tabs.create({"url":MY_NEWTAB});
                         chrome.tabs.remove(tab.id);
                     }
                     chrome.storage.sync.get(['socialSites', 'notificationTime', today, "alert", "customAlert"], function (result) {
@@ -349,35 +348,6 @@ function isExceededBrowsingTime(siteName, result, today) {
 }
 
 
-
-
-
-//function isExceededBrowsingTime(siteName, notificationTime, time) {
-//    var totalTime = 0;
-//    for (var site in time)
-//        totalTime += ((+time[site]) / 1000);
-//    console.log("Total calculated time in notification check = " + totalTime);
-//    totalTime = ~~totalTime;
-//    var nowTime = 0;
-//    var timeParts = notificationTime.split(':');
-//    var hours = ~~timeParts[0];
-//    var min = ~~timeParts[1];
-//    var notificationTimeInSeconds = (hours * 3600) + (min * 60);
-//    console.log(notificationTimeInSeconds + "Total Seconds");
-//    console.log(notificationTime + "as stored");
-//    console.log("Hour " + hours);
-//    console.log("min " + min);
-//    nowTime = new Date() - startTime;
-//    nowTime /= 1000;
-//    nowTime = ~~nowTime;
-//    console.log("only current time  = " + nowTime);
-//    nowTime += totalTime;
-//    console.log("final time = " + nowTime);
-//
-//    return nowTime >= notificationTimeInSeconds;
-//}
-
-
 // chrome.storage.sync.clear(function(){console.log("clear all")});
 
 // chrome.storage.sync.remove(["instagram", "quora", "reddit","twitter","youtube"]);
@@ -430,11 +400,12 @@ function showProgressBar(tabId, site){
 }
 
 chrome.tabs.onActivated.addListener(function(activeInfo) {
+
   chrome.tabs.get(activeInfo.tabId, function(tab){
       var site = isSiteTracked(tab.url);
       if(site){
-       showAlert = false;
-      saveData();
+        showAlert = false;
+        saveData();
       }
         showProgressBar(tab.id, site);
   });
