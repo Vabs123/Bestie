@@ -151,7 +151,7 @@ function storeActiveTimeOfSocialSite(stTime, endTime, curSite) {
             a[curSite] = [];
             a["summary"][curSite] = 0;
         }
-        a[curSite][a[curSite].length] = val1;
+     //   a[curSite][a[curSite].length] = val1;
         a["summary"][curSite] += endTime - stTime;
         a["totalTime"] += onlineTime;
 
