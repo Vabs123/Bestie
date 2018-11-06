@@ -14,11 +14,11 @@
         ]
     },
   //"homepage_url": "http://localhost:8080/newtab.html",
-     "chrome_url_overrides": {
-        "newtab": "newtab.html"
-    },
+//     "chrome_url_overrides": {
+//        "newtab": "newtab.html"
+//    },
   "externally_connectable": {
-    "matches":["http://localhost:8080/*"]
+    "matches":["http://localhost:8080/*", "http://localhost/*", "http://extensionslabs.com/socialMediaTracker/*"]
   },
 
 
@@ -32,13 +32,16 @@
   ],
   
  "permissions": [
+   "http://extensionslabs.com/socialMediaTracker/*",
    "http://localhost:8080/*",
+   "http://localhost/*",
     "webNavigation",
     "tabs",
     "storage",
     "idle",
-   "activeTab"
-]
+   "activeTab",
+   "notifications"
+ ]
 
 
 }

@@ -1,17 +1,14 @@
-console.log(chrome.runtime.id);
-//var setOfKeys = new Set(['socialSites', 'notificationTime']);
-document.getElementById("extension_id").innerText = chrome.runtime.id;
+var ext_id = document.getElementById("extension_id");
+if(ext_id)
+    ext_id.innerText = chrome.runtime.id;
 
 chrome.runtime.sendMessage({url: window.location.href}, function(response) {
     console.log(response);
+    if(isProgressBarAtTopPresent())
+        hideProgressBar();
     if(response){
-        if(!isProgressBarAtTopPresent()) {
-            calculateTotalTimeSpend(response.progressbar).then(showProgressBarAtTop);
-        }
-    }
-    else{
-        if(isProgressBarAtTopPresent())
-            hideProgressBar();
+        calculateTotalTimeSpend(response.progressbar).then(showProgressBarAtTop);
+
     }
 });
 
@@ -21,10 +18,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     if(request.update ){
             calculateTotalTimeSpend(request.update).then(showProgressBarAtTop);
     }
-
-
 });
-
 
 function getTimeInMilliseconds(time){
     var timeParts = time.split(':');
@@ -33,30 +27,17 @@ function getTimeInMilliseconds(time){
     return ((hours * 3600) + (min * 60)) * 1000;
 }
 
-
 function showProgressBarAtTop(time){
 
     var totalSocialTime = ~~time.totalTime;
     var timeSpent = ~~time.usedTime;
 
+    if(timeSpent >= totalSocialTime)
+        timeSpent = totalSocialTime;
+
     var per = getPercentage(timeSpent,totalSocialTime);
     var totalTime = getTimeString(""+getTimeSpend(totalSocialTime));
-
-    // var myvar = '<div id="myprogressbar" style="z-index: 100000;background-color: white;width: 100%;POSITION: relative;padding: 0px;"><span id="close" style="float: right;position: relative; margin:0%; padding: 0%; margin-right: 0.6%;cursor: pointer;vertical-align: middle; font-size: 24px; ">X</span><div id="myProgress" style="width: 98%;background-color: #ddd;">  <div id="myBar" style="width: 50%; height: 25px; background-color: rgb(76, 175, 80); text-align: center; line-height: 25px; color: white; font-size: 20px;"></div><div id = "pBar" style="'+
-    //     '    position: absolute;'+
-    //     '    z-index: 100000000;'+
-    //     '    top: 2.5px;'+
-    //     '    font-size: 18px;'+
-    //     '    left: 40%;'+
-    //     '    color: white; cursor: default;'+
-    //     '    text-shadow: 2px 2px 8px black;'+
-    //     '">1m/2m</div></div></div>';
-
-
     var myvar = '<div id="myprogressbar" style="z-index: 100000;background-color: white;width: 100%;POSITION: relative;padding: 0px;"><span id="close" style="height: 25px;/* float: right; */position: absolute;margin:0%;padding: 0%;/* margin-right: 0.6%; */cursor: pointer;vertical-align: middle;font-size: 24px;width: 31px;right: 0;text-align: center;">X</span><div id="myProgress" style="width: 98%;background-color: #ddd;">  <div id="myBar" style="width: 4%; height: 25px; background-color: rgb(76, 175, 80); text-align: center; line-height: 25px; color: white; font-size: 20px;"></div><div id="pBar" style="position: absolute;z-index: 100000000; top: 2.5px; font-size: 18px;line-height: 18px;left: 40%;/* font-family: arial; */color: white;cursor: default;text-shadow: 2px 2px 8px black;">Time spent : 1m /45m  (4%)</div></div></div>';
-
-
-
     var d = document.createElement('DIV');
     d.innerHTML = myvar;
     document.querySelector("HTML").prepend(d.firstChild);
@@ -73,7 +54,7 @@ function showProgressBarAtTop(time){
     // dynamicChange(timeSpent, totalSocialTime, totalTime, progressBar, pBar);
      setInterval(() => {
          if(isProgressBarAtTopPresent() && document.hasFocus() && (timeSpent < totalSocialTime)){
-             timeSpent += 60000;
+             timeSpent += 1000;
              if(timeSpent >= totalSocialTime)
                  timeSpent = totalSocialTime;
              var per = getPercentage(timeSpent, totalSocialTime);
@@ -82,7 +63,7 @@ function showProgressBarAtTop(time){
              timeUsed = getTimeString(""+getTimeSpend(timeSpent));
              pBar.innerHTML = "Time spent : "+timeUsed+"/"+totalTime+" ("+per+"%)";
          }
-     }, 60000);
+     }, 1000);
 
 }
 
@@ -92,9 +73,6 @@ function changeColor(per, progressBar){
     if(per >= 95)
         progressBar.style.backgroundColor = "#d9534f";
 }
-
-
-
 
 function hideProgressBar(){
     document.getElementById("myprogressbar").style.display = "none";
@@ -115,9 +93,6 @@ function fetchKey( key) {
     return new Promise(function(resolve, reject) {
         chrome.storage.sync.get(key,
             function (result) {
-                // if (response.success)
-                console.log(result);
-                //      alert(response.socialSites);
                 resolve(result);
 
             });
@@ -128,11 +103,8 @@ async function calculateTotalTimeSpend(siteName){
 
     var key = getKey(new Date());
     var result = await fetchKey([key, "notificationTime", "socialSites", "alert", "customAlert"]);
-    console.log(result);
-
     if(result["alert"] === "basic")
         return calculateBasicAlertTime(result, key);
-
     return calculateCustomAlertTime(siteName, result, key);
 }
 
@@ -156,9 +128,6 @@ function calculateCustomAlertTime(siteName, result, today){
     var totalTime = ((time.hour * 3600) + (time.min * 60)) * 1000;
     return {usedTime:timeSpend, totalTime: totalTime};
 }
-
-
-
 
 function getTimeSpend(time){
     time = (+time) / 1000;
@@ -192,20 +161,7 @@ function getTimeString(timeParts){
 }
 
 
-// function updateKey(key, value) {
-//     return new Promise(function(resolve, reject) {
-//         chrome.runtime.sendMessage(EXTENSION_ID, {update: [key, value]},
-//             function (response) {
-//                 // if (response.success)
-//                 console.log(response);
-//                 //alert(response.socialSites);
-//                 resolve(response);
-//             });
-//     });
-// }
-
 function getKey(date){
     var key = ""+date.getFullYear()+date.getMonth()+date.getDate();
-//	console.log("Key to be searched = ", key);
     return key;
 }
